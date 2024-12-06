@@ -196,3 +196,36 @@ CREATE TRIGGER trg_update_product_status
     AFTER UPDATE OF stock ON product -- Se activa después de actualizar el stock
     FOR EACH ROW
     EXECUTE FUNCTION update_product_status();
+
+-----------------
+
+create function insert_pos_establishment() returns trigger
+    language plpgsql
+as
+$$
+BEGIN
+INSERT INTO pos_establishment (establishment_id, latitude, longitude, geom)
+    VALUES (
+           NEW.establishment_id,
+           CAST(NEW.latitude AS DOUBLE PRECISION),
+           CAST(NEW.longitude AS DOUBLE PRECISION),
+           ST_SetSRID(ST_MakePoint(CAST(NEW.longitude AS DOUBLE PRECISION), CAST(NEW.latitude AS DOUBLE PRECISION)), 4326)
+       )
+    ON CONFLICT (establishment_id) DO UPDATE
+        SET
+            latitude = EXCLUDED.latitude,
+            longitude = EXCLUDED.longitude,
+            geom = EXCLUDED.geom;
+
+RETURN NEW;
+END;
+$$;
+
+alter function insert_pos_establishment() owner to postgres;
+
+
+create trigger trg_insert_pos_establishment
+    after insert or update
+                        on establishment
+                        for each row
+                        execute procedure insert_pos_establishment();

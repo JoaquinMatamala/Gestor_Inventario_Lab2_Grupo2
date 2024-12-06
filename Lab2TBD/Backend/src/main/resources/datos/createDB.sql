@@ -51,6 +51,73 @@ CREATE TABLE order_detail (
                               FOREIGN KEY (product_id) REFERENCES product(product_id)
 );
 
+------------------------------------------------------------- nuevo
+
+create table if not exists establishment
+(
+    establishment_id                        integer,
+    establishmet_data                       text,
+    establecimientocodigoantiguo            text,
+    establecimientocodigomadreantiguo       text,
+    establecimientocodigomadrenuevo         double precision,
+    region_id                               integer,
+    region_data                             text,
+    seremisaludcodigo_serviciodesaludcodigo double precision,
+    seremisaludglosa_serviciodesaludglosa   text,
+    tipopertenenciaestabglosa               text,
+    tipoestablecimientoglosa                text,
+    ambitofuncionamiento                    text,
+    certificacion                           text,
+    dependenciaadministrativa               text,
+    nivelatencionestabglosa                 text,
+    comunacodigo                            text,
+    comunaglosa                             text,
+    tipoviaglosa                            text,
+    numero                                  text,
+    nombrevia                               text,
+    telefonomovil_telefonofijo              text,
+    fechainiciofuncionamientoestab          text,
+    tieneserviciourgencia                   text,
+    tipourgencia                            text,
+    clasificaciontiposapu                   text,
+    latitude                                text,
+    longitude                               text,
+    tiposistemasaludglosa                   text,
+    estadofuncionamiento                    text,
+    nivelcomplejidadestabglosa              text,
+    tipoatencionestabglosa                  text,
+    fechaincorporacion                      text
+);
+
+alter table establishment
+    owner to postgres;
+
+create table if not exists pos_establishments
+(
+    establishment_id      integer not null primary key,
+    latitude              double precision,
+    longitude             double precision,
+    geom                  geometry(Point, 4326)
+    );
+
+alter table pos_establishments
+    owner to postgres;
+
+create view view_establishment (establishment_id, establishment_data, region_data, latitude, longitude, position) as
+SELECT e.establishment_id,
+       e.establishment_data,
+       e.region_data,
+       pe.latitude,
+       pe.longitude,
+       pe.geom AS position
+FROM establishment e
+         LEFT JOIN pos_establishments pe ON e.establishment_id = pe.establishment_id;
+
+alter table view_establishment
+    owner to postgres;
+
+-----------------------------------------
+
 -- Poblado de las tablas
 INSERT INTO client (client_name, address, email, password, phone_number) VALUES
                                                                              ('Juan Perez', 'Victor Hugo #801', 'jp@gmail.com', '123ahbz#2', '+56987654321'),
