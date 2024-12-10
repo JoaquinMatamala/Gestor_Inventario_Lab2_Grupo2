@@ -7,4 +7,5 @@ import java.util.List;
 public interface EstablishmentRepository {
     EstablishmentEntity findEstablishmentById(Long id);
     List<EstablishmentEntity> findAllEstablishments();
+    EstablishmentEntity findEstablishmentByRegion(String region);
 }

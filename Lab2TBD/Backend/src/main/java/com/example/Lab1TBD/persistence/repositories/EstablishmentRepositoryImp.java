@@ -38,4 +38,17 @@ public class EstablishmentRepositoryImp implements EstablishmentRepository {
         }
     }
 
+    @Override
+    public EstablishmentEntity findEstablishmentByRegion(String region_data){
+        try (org.sql2o.Connection con = sql2o.open()) {
+            return con.createQuery("SELECT * FROM view_estavlishment WHERE region_data =:region_data")
+                    .addParameter("region_data",region_data)
+                    .executeAndFetchFirst(EstablishmentEntity.class);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }

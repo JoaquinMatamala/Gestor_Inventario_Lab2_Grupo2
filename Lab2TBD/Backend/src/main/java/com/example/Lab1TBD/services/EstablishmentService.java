@@ -20,4 +20,8 @@ public class EstablishmentService {
     public List<EstablishmentEntity> getAllEstablishments() {
         return establishmentRepository.findAllEstablishments();
     }
+
+    public EstablishmentEntity getEstablishmentByRegion(String region) {
+        return establishmentRepository.findEstablishmentByRegion(region);
+    }
 }

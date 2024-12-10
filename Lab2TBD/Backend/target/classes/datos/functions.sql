@@ -198,6 +198,7 @@ CREATE TRIGGER trg_update_product_status
     EXECUTE FUNCTION update_product_status();
 
 -----------------
+-- no agregar hasta probar lo antiguo
 
 create function insert_pos_establishment() returns trigger
     language plpgsql

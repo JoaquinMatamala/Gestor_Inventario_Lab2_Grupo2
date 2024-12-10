@@ -51,6 +51,8 @@ CREATE TABLE order_detail (
                               FOREIGN KEY (product_id) REFERENCES product(product_id)
 );
 
+------------------------------------------------------------- nuevo
+
 create table if not exists establishment
 (
     establishment_id                        integer,
@@ -113,6 +115,8 @@ FROM establishment e
 
 alter table view_establishment
     owner to postgres;
+
+-----------------------------------------
 
 -- Poblado de las tablas
 INSERT INTO client (client_name, address, email, password, phone_number) VALUES

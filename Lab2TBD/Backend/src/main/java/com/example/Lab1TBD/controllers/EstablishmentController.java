@@ -22,7 +22,12 @@ public class EstablishmentController {
     }
 
     @GetMapping("/search/id/{id}")
-    public ResponseEntity<EstablishmentEntity> getEstablishment(@PathVariable Long id) {
+    public ResponseEntity<EstablishmentEntity> getEstablishmentID(@PathVariable Long id) {
         return ResponseEntity.ok(establishmentService.getEstablishmentById(id));
+    }
+
+    @GetMapping("/search/region")
+    public ResponseEntity<EstablishmentEntity> getEstablishmentRegion(@RequestParam String region) {
+        return ResponseEntity.ok(establishmentService.getEstablishmentByRegion(region));
     }
 }
