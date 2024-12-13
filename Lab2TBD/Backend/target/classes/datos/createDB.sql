@@ -1,5 +1,7 @@
 -- Creación de la base de datos
 CREATE DATABASE Lab1TBD;
+CREATE EXTENSION postgis;
+CREATE EXTENSION plpgsql;
 
 -- Creación de tablas
 DROP TABLE IF EXISTS client;
@@ -117,6 +119,29 @@ alter table view_establishment
     owner to postgres;
 
 -----------------------------------------
+
+DROP TABLE IF EXISTS delivery_point;
+CREATE TABLE delivery_point (
+    delivery_point_id serial PRIMARY KEY,
+    delivery_point_name TEXT,
+    latitude double precision,
+    longitude double precision,
+    position geometry(Point, 4326),
+    status_point BOOL,
+    rating INT,
+    FOREIGN KEY (client_id) REFERENCES client(client_id)
+)
+
+------------------------------------------    
+
+private Long delivery_point_id;        //identificador del punto de entrega
+    private String delivery_point_name;   //Nombre del punto de entrega (ej: casa,trabajo,casa del arbol, etc)
+    private String latitude;            //latitud del punto de entrega
+    private String longitude;           //longitud del punto de entrega
+    private String position;            //coordenadas del punto de entrega
+    private Boolean status_point;        //punto de entrega seleccionado por el cliente (0: no seleccionado;1:seleccionado por cliente)
+    private Integer rating;             //media que usa el dealer para medir su peligrosidad de entrega
+    private Integer client_id;
 
 -- Poblado de las tablas
 INSERT INTO client (client_name, address, email, password, phone_number) VALUES

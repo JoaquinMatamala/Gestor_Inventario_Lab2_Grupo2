@@ -1,5 +1,7 @@
 -- Creación de la base de datos
 CREATE DATABASE Lab1TBD;
+CREATE EXTENSION postgis;
+CREATE EXTENSION plpgsql;
 
 -- Creación de tablas
 DROP TABLE IF EXISTS client;
@@ -117,6 +119,20 @@ alter table view_establishment
     owner to postgres;
 
 -----------------------------------------
+
+DROP TABLE IF EXISTS delivery_point;
+CREATE TABLE delivery_point (
+    delivery_point_id serial PRIMARY KEY,
+    delivery_point_name TEXT,
+    latitude double precision,
+    longitude double precision,
+    position TEXT,
+    status_point BOOL,
+    rating INT,
+    FOREIGN KEY (client_id) REFERENCES client(client_id)
+)
+
+------------------------------------------
 
 -- Poblado de las tablas
 INSERT INTO client (client_name, address, email, password, phone_number) VALUES
