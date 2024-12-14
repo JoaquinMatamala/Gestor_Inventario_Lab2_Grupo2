@@ -7,13 +7,12 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class DealerEntity {
-    private Long dealer_id;         //identificador unico del repartidor
-    private String dealer_name;     //nombre del repartidor
-    private String dealer_address;  //direccion de casa del repartidor
-    private String dealer_email;    //correo electronico del repartidor
-    private String dealer_password; //contraseña de entrada a la aplicacion
-    private String dealer_phone;    //telefono del repartidor
-    private Integer establishment_id;   //identificador unico del establecimiento que trabaja el repartidor (FK)
-
+public class DeliveryManEntity {
+    private Long deliveryman_id;         // Unique ID
+    private String deliveryman_name;     // Deliveryman name
+    private String deliveryman_email;    // Deliveryman email
+    private String deliveryman_password; // Deliveryman password
+    private String deliveryman_phone;    // Deliveryman phone number
+    private Long deliveryman_home_location;  // Deliveryman home location (FK)
+    private Long establishment_id;   // Deliveryman establishment (FK)
 }

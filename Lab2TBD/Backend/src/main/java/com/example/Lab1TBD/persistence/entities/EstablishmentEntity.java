@@ -8,10 +8,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EstablishmentEntity {
-    private Long establishment_id;   //identificador del establecimiento
-    private String establishment_data;  //data del establecimiento
-    private String region_data;         //region del establecimiento
-    private String latitude;            //latitud del establecimiento
-    private String longitude;           //longitud del establecimiento
-    private String position;            //coordenadas del establecimiento
+    private Long establishment_id;   // Unique ID
+    private String establishment_data;  // Establishment data
+    private String region_data;         // Region data
+    private Long location_id;           // Location ID (FK)
 }

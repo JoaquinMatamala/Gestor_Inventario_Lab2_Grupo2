@@ -12,10 +12,10 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderDetailEntity {
-    private Long order_detail_id; // ID UNICO
-    private int quantity;         // cantidad del producto en la orden
-    private Float price;          // precio unitario del producto
-    private Long order_id;        // id foraneo que pertenece a la orden FK
-    private Long product_id;      // id foraneo que pertenece al producto FK
+    private Long order_detail_id; // Unique ID
+    private Long product_id;      // Product ID (FK)
+    private int quantity;         // Product quantity
+    private Float price;          // Unit price
+    private Long order_id;        // Order ID (FK)
 }
 

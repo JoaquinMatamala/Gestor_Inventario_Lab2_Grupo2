@@ -3,55 +3,88 @@ CREATE DATABASE Lab1TBD;
 CREATE EXTENSION postgis;
 CREATE EXTENSION plpgsql;
 
--- Creación de tablas
-DROP TABLE IF EXISTS client;
-CREATE TABLE client (
-                        client_id serial PRIMARY KEY,
-                        client_name VARCHAR(255),
-                        address VARCHAR(255),
-                        email VARCHAR(100),
-                        password TEXT,
-                        phone_number VARCHAR(20)
+-- Tables creation
+CREATE TABLE delivery_point (
+    delivery_point_id BIGINT PRIMARY KEY,
+    delivery_point_name VARCHAR(255),
+    status_point BOOLEAN,
+    delivery_location_point BIGINT,
+    client_id BIGINT
 );
 
-DROP TABLE IF EXISTS category;
-CREATE TABLE category (
-                          category_id serial PRIMARY KEY,
-                          category_name VARCHAR(100)
+CREATE TABLE establishment (
+    establishment_id BIGINT PRIMARY KEY,
+    establishment_data VARCHAR(255),
+    region_data VARCHAR(255),
+    location_id BIGINT
 );
 
-DROP TABLE IF EXISTS product;
-CREATE TABLE product (
-                         product_id serial PRIMARY KEY,
-                         product_name VARCHAR(255),
-                         description TEXT,
-                         price DECIMAL(10, 2),
-                         stock INT,
-                         product_status VARCHAR(50),
-                         category_id INT,
-                         FOREIGN KEY (category_id) REFERENCES category(category_id)
+CREATE TABLE location (
+    location_id BIGINT PRIMARY KEY,
+    latitude DOUBLE,
+    longitude DOUBLE,
+    position POINT,
+    location_type VARCHAR(255)
 );
 
-DROP TABLE IF EXISTS orders;
-CREATE TABLE orders (
-                         order_id serial PRIMARY KEY,
-                         date TIMESTAMP,
-                         status VARCHAR(50),
-                         total DECIMAL(10, 2),
-                         client_id INT,
-                         FOREIGN KEY (client_id) REFERENCES client(client_id)
-);
-
-DROP TABLE IF EXISTS order_detail;
 CREATE TABLE order_detail (
-                              order_detail_id serial PRIMARY KEY,
-                              quantity INT,
-                              price DECIMAL(10, 2),
-                              order_id INT,
-                              product_id INT,
-                              FOREIGN KEY (order_id) REFERENCES orders(order_id),
-                              FOREIGN KEY (product_id) REFERENCES product(product_id)
+    order_detail_id BIGINT PRIMARY KEY,
+    product_id BIGINT,
+    quantity INT,
+    price FLOAT,
+    order_id BIGINT
 );
+
+CREATE TABLE orders (
+    order_id BIGINT PRIMARY KEY,
+    date TIMESTAMP,
+    status VARCHAR(255),
+    total FLOAT,
+    client_id BIGINT
+);
+
+CREATE TABLE point_rating (
+    point_rating_id BIGINT PRIMARY KEY,
+    point_id BIGINT,
+    deliveryman_id BIGINT,
+    rating FLOAT,
+    comment VARCHAR(255)
+);
+
+CREATE TABLE product (
+    product_id BIGINT PRIMARY KEY,
+    product_name VARCHAR(255),
+    description VARCHAR(255),
+    price FLOAT,
+    stock INT,
+    product_status VARCHAR(255),
+    category_id BIGINT
+);
+
+CREATE TABLE category (
+    category_id BIGINT PRIMARY KEY,
+    category_name VARCHAR(255)
+);
+
+CREATE TABLE client (
+    client_id BIGINT PRIMARY KEY,
+    client_name VARCHAR(255),
+    email VARCHAR(255),
+    password VARCHAR(255),
+    phone_number VARCHAR(20),
+    home_location BIGINT
+);
+
+CREATE TABLE delivery_man (
+    deliveryman_id BIGINT PRIMARY KEY,
+    deliveryman_name VARCHAR(255),
+    deliveryman_email VARCHAR(255),
+    deliveryman_password VARCHAR(255),
+    deliveryman_phone VARCHAR(20),
+    deliveryman_home_location BIGINT,
+    establishment_id BIGINT
+);
+
 
 ------------------------------------------------------------- nuevo
 

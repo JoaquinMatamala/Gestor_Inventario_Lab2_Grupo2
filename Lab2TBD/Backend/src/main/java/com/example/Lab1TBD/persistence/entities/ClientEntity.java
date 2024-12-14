@@ -8,11 +8,11 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ClientEntity {
-    private Long client_id;         // identificador unico del cliente
-    private String client_name;   // nombre completo del cliente (nombres y apellidos)
-    private String address;       //  direccion del cliente
-    private String email;           // correo electronico del cliente
-    private String password;           // clave unica
-    private String phone_number;        // telefono del cliente
+    private Long client_id;         // Unique ID
+    private String client_name;   // Client name
+    private String email;           // Client email
+    private String password;           // Password
+    private String phone_number;        // Phone number
+    private Long home_location;         // Address or location (FK)
 }
 

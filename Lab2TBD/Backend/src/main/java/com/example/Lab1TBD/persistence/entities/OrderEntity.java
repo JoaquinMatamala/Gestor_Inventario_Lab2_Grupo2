@@ -15,10 +15,10 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderEntity {
-    private Long order_id;  // ID UNICO
+    private Long order_id;  // Unique ID
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Timestamp date; // fecha en que se realizo la orden
-    private String status;  // estado de la orden (pendiente,pagada,enviada)
-    private Float total;    // total a pagar de la orden (OJO, todos los productos del cliente)
-    private Long client_id; // identificador foraneo del cliente FK
+    private Timestamp date; // Timestamp for the order
+    private String status;  // Order status (pagada, enviada, pendiente, etc)
+    private Float total;    // Total price of the order
+    private Long client_id; // Client ID (FK)
 }
