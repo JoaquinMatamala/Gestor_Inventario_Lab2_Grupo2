@@ -8,4 +8,5 @@ public interface DeliveryPointRepository {
     DeliveryPointEntity findDeliveryPointById(Long id);
     DeliveryPointEntity findDeliveryPointByName(String name);
     List<DeliveryPointEntity> findAllDeliveryPointsByIdClient(Long id);
+    void logDeliveryManRegistration(Long deliveryManId);
 }
