@@ -7,9 +7,10 @@
       <button @click="goToRanking" class="nav-button">Ver Top Globales</button>
     </nav>
     <h1 class="centered-title">Gestor de Inventario</h1>
-    
-
-    <button @click="logout" class="logout-button">Cerrar Sesión</button>
+    <div class="right-buttons">
+      <button @click="goToAddress" class="address-button">Dirección de entrega</button>
+      <button @click="logout" class="logout-button">Cerrar Sesión</button>
+    </div>
   </header>
 </template>
 
@@ -37,7 +38,13 @@ export default {
     async goToRanking() {
       const isValid = await validateSession(); // Valida la sesión
       if (isValid) {
-        this.$router.push("/ranking-queries"); // 
+        this.$router.push("/ranking-queries"); //
+      }
+    },
+    async goToAddress() {
+      const isValid = await validateSession(); // Valida la sesión
+      if (isValid) {
+        this.$router.push("/select-location"); // Cambia esta ruta según tu implementación
       }
     },
     logout() {
@@ -49,68 +56,88 @@ export default {
 };
 </script>
 
-
 <style scoped>
 header {
-  position: fixed; /* Fija el header en la parte superior */
-  top: 0; /* Alinea al borde superior */
-  left: 0; /* Alinea al borde izquierdo */
-  width: 100%; /* Asegura que ocupe todo el ancho */
-  background-color: #007bff; /* Fondo azul */
-  color: white; /* Texto blanco */
-  padding: 15px 0; /* Espaciado interno vertical */
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Sombra sutil */
-  z-index: 10; /* Mantén el header sobre otros elementos */
-  display: flex; /* Habilitar flexbox */
-  justify-content: space-between; /* Espaciado entre los elementos del header */
-  align-items: center; /* Alinear elementos verticalmente */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #007bff;
+  color: white;
+  padding: 15px 0;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .centered-title {
-  position: absolute; /* Posiciona el título dentro del header */
-  top: 50%; /* Centra verticalmente */
-  left: 50%; /* Centra horizontalmente */
-  transform: translate(-50%, -50%); /* Ajusta la posición al centro exacto */
-  font-size: 2rem; /* Tamaño del título */
-  margin: 0; /* Sin margen adicional */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  margin: 0;
 }
 
 nav {
   display: flex;
   align-items: center;
-  gap: 10px; /* Espaciado entre botones */
+  gap: 10px;
   margin-left: 20px;
 }
 
 .nav-button {
-  background-color: white; /* Fondo blanco para los botones */
-  color: #007bff; /* Texto azul */
-  border: 1px solid #007bff; /* Borde azul */
-  padding: 10px 15px; /* Espaciado interno */
-  border-radius: 5px; /* Bordes redondeados */
-  font-size: 1rem; /* Tamaño del texto */
-  cursor: pointer; /* Cursor cambia al pasar sobre el botón */
-  transition: background-color 0.3s, color 0.3s; /* Transición suave */
+  background-color: white;
+  color: #007bff;
+  border: 1px solid #007bff;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .nav-button:hover {
-  background-color: #0056b3; /* Fondo azul más oscuro al pasar */
-  color: white; /* Texto blanco al pasar */
+  background-color: #0056b3;
+  color: white;
+}
+
+.right-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: 20px;
+}
+
+.address-button {
+  background-color: #6c757d; /* Botón gris */
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.address-button:hover {
+  background-color: #5a6268; /* Gris más oscuro al pasar */
 }
 
 .logout-button {
-  background-color: #dc3545; /* Fondo rojo */
-  color: white; /* Texto blanco */
-  border: none; /* Sin bordes */
-  padding: 10px 15px; /* Espaciado interno */
-  border-radius: 5px; /* Bordes redondeados */
-  font-size: 1rem; /* Tamaño del texto */
-  cursor: pointer; /* Cursor cambia al pasar sobre el botón */
-  margin-right: 20px; /* Separación del borde derecho */
-  transition: background-color 0.3s; /* Transición suave */
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .logout-button:hover {
-  background-color: #b02a37; /* Fondo rojo más oscuro al pasar */
+  background-color: #b02a37;
 }
 </style>

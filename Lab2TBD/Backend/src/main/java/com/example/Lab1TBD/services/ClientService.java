@@ -73,5 +73,8 @@ public class ClientService {
             throw new RuntimeException("Error al registrar el log de registro: " + e.getMessage(), e);
         }
     }
+    public void assignHomeLocationToClient(Long clientId, Long locationId) {
+        clientRepository.updateHomeLocation(clientId, locationId);
+    }
 
 }

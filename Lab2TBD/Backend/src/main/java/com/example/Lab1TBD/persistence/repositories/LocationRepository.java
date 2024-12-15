@@ -8,7 +8,11 @@ public interface LocationRepository {
 
     LocationEntity findLocationByType(String location_type);
 
+
+
     void saveLocation(LocationEntity location);
+
+    LocationEntity findLocationWithMaxId();
 
     void deleteLocation(Long location_id);
 }

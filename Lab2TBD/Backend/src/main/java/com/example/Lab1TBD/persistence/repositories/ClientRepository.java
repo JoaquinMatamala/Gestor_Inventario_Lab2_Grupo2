@@ -14,4 +14,6 @@ public interface ClientRepository {
     void logUserLogin(Long userId);
 
     void logUserRegistration(Long userId);
+
+    void updateHomeLocation(Long clientId, Long locationId);
 }

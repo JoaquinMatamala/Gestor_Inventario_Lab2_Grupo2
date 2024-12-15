@@ -24,5 +24,18 @@ public class DeliveryPointService {
     public DeliveryPointEntity getDeliveryPointByName(String name) {
         return deliveryPointRepository.findDeliveryPointByName(name);
     }
+    public void createDeliveryPoint(String name, Boolean status, String comment, Long locationPoint, Long clientId) {
+        DeliveryPointEntity deliveryPoint = new DeliveryPointEntity();
+        deliveryPoint.setDelivery_point_name(name);
+        deliveryPoint.setStatus_point(status);
+        deliveryPoint.setRating(null); // Rating inicial en null
+        deliveryPoint.setComment(comment);
+        deliveryPoint.setDelivery_location_point(locationPoint);
+        deliveryPoint.setDeliveryman_id(null); // Deliveryman asignado después
+        deliveryPoint.setClient_id(clientId);
+
+        deliveryPointRepository.saveDeliveryPoint(deliveryPoint);
+    }
+
 
 }

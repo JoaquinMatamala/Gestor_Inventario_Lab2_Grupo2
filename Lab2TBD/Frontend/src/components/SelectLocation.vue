@@ -1,11 +1,28 @@
 <template>
   <div class="map-container">
     <h2 class="text-center mb-4">Selecciona una Ubicación en el Mapa</h2>
+
+    <!-- Buscador de direcciones -->
+    <div class="form-group">
+      <label for="addressSearch">Buscar Dirección:</label>
+      <div class="input-group">
+        <input
+          type="text"
+          id="addressSearch"
+          v-model="addressSearch"
+          placeholder="Ingresa una dirección"
+          class="form-control"
+        />
+        <button @click="searchAddress" class="btn btn-primary">Buscar</button>
+      </div>
+    </div>
+
     <!-- Mapa con Google Maps -->
     <GMapMap
       :center="center"
       :zoom="12"
       style="height: 500px; width: 100%"
+      :options="mapOptions"
       @click="addMarker"
     >
       <GMapMarker
@@ -54,34 +71,33 @@ export default {
   name: "SelectLocation",
   data() {
     return {
-      center: { lat: -33.4569, lng: -70.6483 }, // Centro del mapa (Santiago, Chile)
-      markers: [], // Lista de marcadores
-      geoJson: null, // Datos GeoJSON de la ubicación seleccionada
-      locationType: "home", // Tipo de ubicación seleccionada
+      center: { lat: -33.4569, lng: -70.6483 },
+      markers: [],
+      geoJson: null,
+      locationType: "home",
+      addressSearch: "",
+      mapOptions: {
+        scrollwheel: true,
+      },
     };
   },
   methods: {
-    // Agregar marcador y obtener la dirección automáticamente
     async addMarker(event) {
       const { latLng } = event;
 
-      // Crear posición del marcador
       const position = {
         lat: latLng.lat(),
         lng: latLng.lng(),
       };
 
-      // Actualizar lista de marcadores (único marcador)
       this.markers = [position];
 
-      // Obtener dirección con la Geocoding API
       const address = await this.getAddressFromCoordinates(position.lat, position.lng);
 
-      // Crear el GeoJSON
       this.geoJson = {
         geometry: {
           type: "Point",
-          coordinates: [position.lng, position.lat], // Formato GeoJSON
+          coordinates: [position.lng, position.lat],
         },
         properties: {
           location_type: this.locationType,
@@ -90,9 +106,48 @@ export default {
       };
     },
 
-    // Método para obtener la dirección usando la Geocoding API
+    async searchAddress() {
+      if (!this.addressSearch.trim()) {
+        alert("Por favor, ingresa una dirección.");
+        return;
+      }
+
+      const apiKey = process.env.VUE_APP_GOOGLE_MAPS_API_KEY;
+      try {
+        const response = await fetch(
+          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+            this.addressSearch
+          )}&key=${apiKey}`
+        );
+        const data = await response.json();
+
+        if (data.results && data.results.length > 0) {
+          const result = data.results[0];
+          const location = result.geometry.location;
+
+          this.center = { lat: location.lat, lng: location.lng };
+          this.markers = [{ lat: location.lat, lng: location.lng }];
+          this.geoJson = {
+            geometry: {
+              type: "Point",
+              coordinates: [location.lng, location.lat],
+            },
+            properties: {
+              location_type: this.locationType,
+              address: result.formatted_address,
+            },
+          };
+        } else {
+          alert("No se encontró ninguna ubicación para la dirección ingresada.");
+        }
+      } catch (error) {
+        console.error("Error al buscar la dirección:", error);
+        alert("Hubo un error al buscar la dirección. Intenta nuevamente.");
+      }
+    },
+
     async getAddressFromCoordinates(lat, lng) {
-      const apiKey = ""; // Reemplaza con tu clave de API de Google Maps
+      const apiKey = process.env.VUE_APP_GOOGLE_MAPS_API_KEY;
       try {
         const response = await fetch(
           `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`
@@ -100,7 +155,7 @@ export default {
         const data = await response.json();
 
         if (data.results && data.results.length > 0) {
-          return data.results[0].formatted_address; // Extraer la dirección
+          return data.results[0].formatted_address;
         }
         return null;
       } catch (error) {
@@ -109,7 +164,6 @@ export default {
       }
     },
 
-    // Método para enviar el GeoJSON al backend
     async sendGeoJson() {
       if (!this.geoJson) {
         alert("Selecciona una ubicación en el mapa primero.");
@@ -117,13 +171,30 @@ export default {
       }
 
       try {
-        console.log("GeoJSON enviado:", JSON.stringify(this.geoJson));
+        const role = localStorage.getItem("role");
+        const clientId = localStorage.getItem("clientId");
+
+        // Crear la ubicación
         await LocationService.saveLocation(this.geoJson);
-        alert("Ubicación enviada correctamente.");
-        this.markers = []; // Limpiar marcador
-        this.geoJson = null; // Reiniciar GeoJSON
+        alert("✅ Ubicación creada con éxito.");
+
+        // Obtener el ID de la ubicación creada
+        const location = await LocationService.getLocationWithMaxId();
+        const locationId = location.location_id;
+        console.log("📥 Última ubicación creada:", location);
+
+        // Asignar la ubicación al cliente si es necesario
+        if (role === "CLIENTE" && clientId) {
+          await LocationService.assignHomeLocation(clientId, locationId);
+          alert(`✅ Ubicación asignada correctamente al cliente con ID: ${clientId}`);
+        } else {
+          alert("El rol no es CLIENTE. Solo se creó la ubicación.");
+        }
+
+        this.markers = [];
+        this.geoJson = null;
       } catch (error) {
-        console.error("Error al enviar el GeoJSON:", error.response?.data || error.message);
+        console.error("Error en el flujo de creación/asignación:", error.response?.data || error.message);
         alert("Hubo un error al enviar la ubicación. Intenta nuevamente.");
       }
     },
@@ -144,5 +215,11 @@ export default {
 button[disabled] {
   background-color: #cccccc;
   cursor: not-allowed;
+}
+
+.input-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
 }
 </style>

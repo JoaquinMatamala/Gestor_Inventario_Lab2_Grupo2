@@ -30,5 +30,15 @@ public class ClientController {
 
         return ResponseEntity.ok(updatedClient); // Retornar cliente actualizado
     }
+    @PostMapping("/assign-home-location")
+    public ResponseEntity<?> assignHomeLocation(@RequestParam Long clientId, @RequestParam Long locationId) {
+        try {
+            clientService.assignHomeLocationToClient(clientId, locationId);
+            return ResponseEntity.ok("Ubicación asignada exitosamente.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al asignar ubicación.");
+        }
+    }
 
 }

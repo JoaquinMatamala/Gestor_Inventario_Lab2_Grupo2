@@ -20,5 +20,6 @@ public class OrderEntity {
     private Timestamp date; // Timestamp for the order
     private String status;  // Order status (pagada, enviada, pendiente, etc)
     private Float total;    // Total price of the order
+    private Long delivery_point_id; // Delivery point ID (FK)
     private Long client_id; // Client ID (FK)
 }

@@ -13,10 +13,10 @@ public class DeliveryPointRepositoryImp implements DeliveryPointRepository {
     Sql2o sql2o;
 
     @Override
-    public DeliveryPointEntity findDeliveryPointById(Long delivery_point_id){
+    public DeliveryPointEntity findDeliveryPointById(Long delivery_point_id) {
         try (org.sql2o.Connection con = sql2o.open()) {
-            return con.createQuery("SELECT * FROM delivery_point WHERE delibery_point_id =: delibery_point_id")
-                    .addParameter("delibery_point_id",delivery_point_id)
+            return con.createQuery("SELECT * FROM delivery_point WHERE delivery_point_id = :delivery_point_id")
+                    .addParameter("delivery_point_id", delivery_point_id)
                     .executeAndFetchFirst(DeliveryPointEntity.class);
 
         } catch (Exception e) {
@@ -26,37 +26,71 @@ public class DeliveryPointRepositoryImp implements DeliveryPointRepository {
     }
 
     @Override
-    public DeliveryPointEntity findDeliveryPointByName(String delivery_point_name){
+    public DeliveryPointEntity findDeliveryPointByName(String delivery_point_name) {
         try (org.sql2o.Connection con = sql2o.open()) {
-            return con.createQuery("SELECT * FROM delivery_point WHERE delivery_point_name =: delivery_point_name")
-                    .addParameter("delivery_point_name",delivery_point_name)
+            return con.createQuery("SELECT * FROM delivery_point WHERE delivery_point_name = :delivery_point_name")
+                    .addParameter("delivery_point_name", delivery_point_name)
                     .executeAndFetchFirst(DeliveryPointEntity.class);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
     @Override
-    public List<DeliveryPointEntity> findAllDeliveryPointsByIdClient(Long client_id){
+    public List<DeliveryPointEntity> findAllDeliveryPointsByIdClient(Long client_id) {
         try (org.sql2o.Connection con = sql2o.open()) {
-            return con.createQuery("SELECT * FROM delivery_point dp, client c WHERE dp.client_id = c.client_id AND dp.client_id =: client_id")
-                    .addParameter("dp.client_id",client_id)
+            return con.createQuery("SELECT * FROM delivery_point WHERE client_id = :client_id")
+                    .addParameter("client_id", client_id)
                     .executeAndFetch(DeliveryPointEntity.class);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    // findAllDeliveryPointsAVG //sacar el promedio de valoracion de todas los puntos y mostrarlo
+    // Obtener el promedio de valoración de todos los puntos de entrega
+    @Override
+    public Float findAllDeliveryPointsAVG() {
+        try (org.sql2o.Connection con = sql2o.open()) {
+            return con.createQuery("SELECT AVG(rating) FROM delivery_point")
+                    .executeScalar(Float.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
-    // findDeliveryPointStatusOn //selecciona un punto de seleccion del cliente a la que se le entregue su orden actualoizando su ubicacion
-    // findDeliveryPointStatusOFF // deselecciona un punto de seleccion .... etc , en servicio se vera su logica
-                                    // o sea, updateStatusPoint tanto si es null el punto o existe uno a reemplazar
+    // Actualizar el estado de un punto de entrega (activar/desactivar)
+    @Override
+    public void updateStatusPoint(Long delivery_point_id, Boolean status) {
+        try (org.sql2o.Connection con = sql2o.open()) {
+            con.createQuery("UPDATE delivery_point SET status_point = :status WHERE delivery_point_id = :delivery_point_id")
+                    .addParameter("status", status)
+                    .addParameter("delivery_point_id", delivery_point_id)
+                    .executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-
+    @Override
+    public void saveDeliveryPoint(DeliveryPointEntity deliveryPoint) {
+        try (org.sql2o.Connection con = sql2o.open()) {
+            con.createQuery("INSERT INTO delivery_point (delivery_point_name, status_point, rating, comment, delivery_location_point, deliveryman_id, client_id) " +
+                            "VALUES (:delivery_point_name, :status_point, NULL, :comment, :delivery_location_point, NULL, :client_id)")
+                    .addParameter("delivery_point_name", deliveryPoint.getDelivery_point_name())
+                    .addParameter("status_point", deliveryPoint.getStatus_point())
+                    .addParameter("comment", deliveryPoint.getComment())
+                    .addParameter("delivery_location_point", deliveryPoint.getDelivery_location_point())
+                    .addParameter("client_id", deliveryPoint.getClient_id())
+                    .executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error al guardar el punto de entrega", e);
+        }
+    }
 
 }

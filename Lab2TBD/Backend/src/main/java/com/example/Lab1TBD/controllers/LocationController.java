@@ -56,4 +56,16 @@ public class LocationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al buscar ubicaciones");
         }
     }
+
+    @GetMapping("/max-id")
+    public ResponseEntity<LocationEntity> getLocationWithMaxId() {
+        try {
+            LocationEntity location = locationService.getLocationWithMaxId();
+            return ResponseEntity.ok(location);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
 }

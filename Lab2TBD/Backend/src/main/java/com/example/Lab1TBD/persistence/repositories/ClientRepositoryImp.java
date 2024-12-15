@@ -130,6 +130,18 @@ public class ClientRepositoryImp implements ClientRepository {
         }
     }
 
+    @Override
+    public void updateHomeLocation(Long clientId, Long locationId) {
+        try (org.sql2o.Connection con = sql2o.open()) {
+            con.createQuery("UPDATE client SET home_location = :locationId WHERE client_id = :clientId")
+                    .addParameter("locationId", locationId)
+                    .addParameter("clientId", clientId)
+                    .executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
 

@@ -30,6 +30,23 @@ public class DeliveryPointController {
     public ResponseEntity<DeliveryPointEntity> searchDeliveryPointByName(@RequestParam String name){
         return ResponseEntity.ok(deliveryPointService.getDeliveryPointByName(name));
     }
+    @PostMapping("/create")
+    public ResponseEntity<String> createDeliveryPoint(@RequestBody DeliveryPointEntity deliveryPoint) {
+        try {
+            deliveryPointService.createDeliveryPoint(
+                    deliveryPoint.getDelivery_point_name(),
+                    deliveryPoint.getStatus_point(),
+                    deliveryPoint.getComment(),
+                    deliveryPoint.getDelivery_location_point(),
+                    deliveryPoint.getClient_id()
+            );
+            return ResponseEntity.ok("Punto de entrega creado con éxito");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error al crear el punto de entrega");
+        }
+    }
+
 
 
 

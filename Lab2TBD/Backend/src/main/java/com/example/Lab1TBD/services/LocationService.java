@@ -31,7 +31,6 @@ public class LocationService {
 
         // Crear la entidad
         LocationEntity location = new LocationEntity();
-        location.setLocation_id(System.currentTimeMillis()); // Generar un ID único
         location.setLatitude(latitude);
         location.setLongitude(longitude);
         location.setPosition(String.format("POINT(%f %f)", longitude, latitude)); // Convertir a WKT
@@ -40,6 +39,9 @@ public class LocationService {
 
         // Guardar en el repositorio
         locationRepository.saveLocation(location);
+    }
+    public LocationEntity getLocationWithMaxId() {
+        return locationRepository.findLocationWithMaxId();
     }
 
 

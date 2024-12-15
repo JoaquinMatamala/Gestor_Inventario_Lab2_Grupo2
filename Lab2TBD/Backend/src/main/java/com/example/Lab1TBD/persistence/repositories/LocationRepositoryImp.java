@@ -38,21 +38,38 @@ public class LocationRepositoryImp implements LocationRepository {
     @Override
     public void saveLocation(LocationEntity location) {
         try (org.sql2o.Connection con = sql2o.open()) {
-            String sql = "INSERT INTO location (location_id, latitude, longitude, position, address, location_type) " +
-                    "VALUES (:location_id, :latitude, :longitude, POINT(:longitude, :latitude), :address, :location_type)";
+            String sql = "INSERT INTO location (latitude, longitude, position, address, location_type) " +
+                    "VALUES (:latitude, :longitude, ST_GeomFromText(:position, 4326), :address, :location_type)";
+
+            // Formatear las coordenadas en WKT (Well-Known Text) asegurando el separador decimal correcto
+            String positionWKT = String.format(java.util.Locale.US, "POINT(%f %f)", location.getLongitude(), location.getLatitude());
 
             con.createQuery(sql)
-                    .addParameter("location_id", location.getLocation_id())
                     .addParameter("latitude", location.getLatitude())
                     .addParameter("longitude", location.getLongitude())
+                    .addParameter("position", positionWKT) // Pasar WKT al parámetro
                     .addParameter("address", location.getAddress())
                     .addParameter("location_type", location.getLocation_type())
-
                     .executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+    @Override
+    public LocationEntity findLocationWithMaxId() {
+        try (org.sql2o.Connection con = sql2o.open()) {
+            String sql = "SELECT * FROM location WHERE location_id = (SELECT MAX(location_id) FROM location)";
+            return con.createQuery(sql).executeAndFetchFirst(LocationEntity.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error al obtener la ubicación con el ID más grande");
+        }
+    }
+
+
+
+
+
 
 
 
