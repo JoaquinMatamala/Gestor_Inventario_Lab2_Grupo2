@@ -8,6 +8,9 @@ import OrderDetail from '../components/OrderDetail.vue';
 import RankingQueries from '../components/RankingQueries.vue';
 import RankingDetail from '../components/RankingDetail.vue';
 import SelectLocation from '@/components/SelectLocation.vue';
+import AdminPage from '../components/AdminPage.vue';
+import StoreManagement from '../components/StoreManagement.vue';
+import DeliveryManagement from '../components/DeliveryManagement.vue';
 
 const routes = [
   {
@@ -56,8 +59,21 @@ const routes = [
     name: "SelectLocation",
     component: SelectLocation,
   },
-
-
+  {
+    path: '/admin',
+    name: 'AdminPage',
+    component: AdminPage,
+  },
+  {
+    path: '/admin/stores',
+    name: 'StoreManagement',
+    component: StoreManagement,
+  },
+  {
+    path: '/admin/delivery',
+    name: 'DeliveryManagement',
+    component: DeliveryManagement,
+  },
 ];
 
 const router = createRouter({

@@ -17,6 +17,9 @@ public class LocationController {
 
     @PostMapping
     public ResponseEntity<String> saveLocation(@RequestBody GeoJsonDTO geoJson) {
+        System.out.println("Propiedades recibidas: " + geoJson.getProperties());
+
+
         try {
             locationService.saveLocation(geoJson);
             return ResponseEntity.status(HttpStatus.CREATED).body("Ubicación guardada correctamente");
@@ -29,12 +32,28 @@ public class LocationController {
     }
 
     @GetMapping("getLocation/{id}")
-    public ResponseEntity<LocationEntity> getLocationById(@PathVariable Long id) {
-        return ResponseEntity.ok(locationService.getLocationById(id));
+    public ResponseEntity<?> getLocationById(@PathVariable Long id) {
+        try {
+            LocationEntity location = locationService.getLocationById(id);
+            if (location == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ubicación no encontrada");
+            }
+            return ResponseEntity.ok(location);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al buscar la ubicación");
+        }
     }
 
     @GetMapping("getType")
-    public ResponseEntity<LocationEntity> getLocationByType(@RequestParam String type) {
-        return ResponseEntity.ok(locationService.getLocationByType(type));
+    public ResponseEntity<?> getLocationByType(@RequestParam String type) {
+        try {
+            LocationEntity location = locationService.getLocationByType(type);
+            if (location == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontraron ubicaciones de ese tipo");
+            }
+            return ResponseEntity.ok(location);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al buscar ubicaciones");
+        }
     }
 }

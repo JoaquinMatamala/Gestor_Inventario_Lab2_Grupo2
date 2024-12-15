@@ -10,12 +10,15 @@ CREATE TABLE IF NOT EXISTS delivery_point (
     delivery_point_name VARCHAR(255),
     status_point BOOLEAN,
     rating FLOAT,
+    comment VARCHAR(255),
     delivery_location_point BIGINT,
+    deliveryman_id BIGINT,
     client_id BIGINT
+
 );
 
 CREATE TABLE IF NOT EXISTS establishment (
-    establishment_id BIGINT PRIMARY KEY,
+    establishment_id serial PRIMARY KEY,
     establishment_data VARCHAR(255),
     region_data VARCHAR(255),
     location_id BIGINT
@@ -26,11 +29,12 @@ CREATE TABLE IF NOT EXISTS location (
     latitude DOUBLE PRECISION,
     longitude DOUBLE PRECISION,
     position POINT,
+    address VARCHAR(255),
     location_type VARCHAR(255)
 );
 
 CREATE TABLE IF NOT EXISTS order_detail (
-    order_detail_id BIGINT PRIMARY KEY,
+    order_detail_id serial PRIMARY KEY,
     product_id BIGINT,
     quantity INT,
     price FLOAT,
@@ -38,23 +42,16 @@ CREATE TABLE IF NOT EXISTS order_detail (
 );
 
 CREATE TABLE IF NOT EXISTS orders (
-    order_id BIGINT PRIMARY KEY,
+    order_id serial PRIMARY KEY,
     date TIMESTAMP,
     status VARCHAR(255),
     total FLOAT,
     client_id BIGINT
 );
 
-CREATE TABLE IF NOT EXISTS point_rating (
-    point_rating_id BIGINT PRIMARY KEY,
-    point_id BIGINT,
-    deliveryman_id BIGINT,
-    rating FLOAT,
-    comment VARCHAR(255)
-);
 
 CREATE TABLE IF NOT EXISTS product (
-    product_id BIGINT PRIMARY KEY,
+    product_id serial PRIMARY KEY,
     product_name VARCHAR(255),
     description VARCHAR(255),
     price FLOAT,
@@ -64,7 +61,7 @@ CREATE TABLE IF NOT EXISTS product (
 );
 
 CREATE TABLE IF NOT EXISTS category (
-    category_id BIGINT PRIMARY KEY,
+    category_id serial PRIMARY KEY,
     category_name VARCHAR(255)
 );
 
@@ -74,11 +71,12 @@ CREATE TABLE IF NOT EXISTS client (
     email VARCHAR(255),
     password VARCHAR(255),
     phone_number VARCHAR(20),
-    home_location BIGINT
+    home_location BIGINT,
+    role VARCHAR(255)
 );
 
 CREATE TABLE IF NOT EXISTS delivery_man (
-    deliveryman_id BIGINT PRIMARY KEY,
+    deliveryman_id serial PRIMARY KEY,
     deliveryman_name VARCHAR(255),
     deliveryman_email VARCHAR(255),
     deliveryman_password VARCHAR(255),
@@ -210,6 +208,11 @@ INSERT INTO order_detail (quantity, price, order_id, product_id) VALUES
                                                                      (3, 150000, 3, 3),
                                                                      (2, 250000, 4, 4),
                                                                      (1, 180000, 5, 5);
+
+INSERT INTO establishment (establishment_data, region_data, location_id) VALUES
+                                                                            ('Preunic', 'Metropolitana', 1),
+                                                                            ('Calzados beba', 'Valparaiso', 2),
+                                                                            ('Fruna', 'Coquimbo', 3);
 
 -- Consulta para calcular los ingresos por producto agrupados por categoría y porcentaje de ventas
 WITH TotalIncome AS (

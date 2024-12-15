@@ -44,18 +44,25 @@ export default {
   },
   methods: {
     async login() {
-      try {
-        const response = await loginService.login(this.email, this.password);
+  try {
+    // Realiza la solicitud al backend y obtén los datos desestructurados
+    const { role } = await loginService.login(this.email, this.password);
 
-        console.log("Sesión Iniciada:", response);
-        alert("Sesión Iniciada");
+    console.log("Sesión Iniciada con rol:", role);
+    alert("Sesión Iniciada");
 
-        this.$router.push("/products");
-      } catch (error) {
-        console.error("Error al iniciar sesión:", error.response?.data || error.message);
-        alert("Error al iniciar sesión. Por favor, verifica tus credenciales.");
-      }
+    // Verificar el rol del usuario y redirigir
+    if (role === "ADMIN") {
+      this.$router.push("/admin"); // Página de administrador
+    } else {
+      this.$router.push("/products"); // Página de productos para otros roles
     }
+  } catch (error) {
+    console.error("Error al iniciar sesión:", error.response?.data || error.message);
+    alert("Error al iniciar sesión. Por favor, verifica tus credenciales.");
+  }
+}
+
   }
 };
 </script>

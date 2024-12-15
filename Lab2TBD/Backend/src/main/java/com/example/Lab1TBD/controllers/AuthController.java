@@ -42,43 +42,33 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
-        // Imprimir los datos recibidos en el backend
-        System.out.println("Datos recibidos en el backend: " + loginDto);
-
         try {
-            // Autenticar al usuario con los datos proporcionados
-            UsernamePasswordAuthenticationToken loginToken = new UsernamePasswordAuthenticationToken(
-                    loginDto.getEmail(),
-                    loginDto.getPassword()
-            );
-            authenticationManager.authenticate(loginToken);
-
-            // Si la autenticación es exitosa, generar JWT
-            String jwt = jwtUtil.create(loginDto.getEmail());
-
-            // Obtener el usuario autenticado de la base de datos
-            ClientEntity client = clientRepository.findClientByEmail(loginDto.getEmail());
-            if (client == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body("Usuario no encontrado.");
+            // Buscar usuario por email
+            ClientEntity user = clientService.getClientByEmail(loginDto.getEmail());
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario no encontrado.");
             }
 
-            // Registrar el login en la tabla audit_log
-            clientService.logUserLogin(client.getClient_id());
+            // Validar contraseña
+            if (!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Contraseña incorrecta.");
+            }
 
-            // Construir la respuesta con el token y la clientId
-            Map<String, Object> response = new HashMap<>();
-            response.put("token", jwt);
-            response.put("client_id", client.getClient_id());
+            // Generar token JWT con el rol del usuario
+            String token = jwtUtil.create(user.getEmail(), user.getRole());
 
-            return ResponseEntity.ok(response);
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Credenciales incorrectas.");
+            // Devolver token, rol y client_id
+            return ResponseEntity.ok().body(
+                    Map.of(
+                            "token", token,
+                            "role", user.getRole(),
+                            "client_id", user.getClient_id() // Agregar client_id aquí
+                    )
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al procesar el login.");
         }
     }
-
-
 
 
     @PostMapping("/register")
@@ -97,7 +87,8 @@ public class AuthController {
                     registerDto.getEmail(), // Email
                     passwordEncoder.encode(registerDto.getPassword()), // Encriptar contraseña
                     registerDto.getPhone_number(),// Dirección del usuario// Número de teléfono
-                    registerDto.getHome_location() // Dirección del usuario
+                    null, // Dirección del usuario, se completará después
+                    registerDto.getRole() // Dirección del usuario
             );
             clientRepository.saveClient(newClient);
 

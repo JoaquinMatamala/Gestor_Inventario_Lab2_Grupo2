@@ -15,39 +15,40 @@ public class LocationService {
     private LocationRepository locationRepository;
 
     public void saveLocation(GeoJsonDTO geoJson) {
-        // Obtener tipo de geometría
         String type = geoJson.getGeometry().getType();
-
-        // Validar que sea un Point
         if (!"Point".equals(type)) {
             throw new IllegalArgumentException("Sólo se soporta el tipo 'Point'");
         }
 
-        // Obtener coordenadas
+        // Obtener las coordenadas
         List<Double> coordinates = geoJson.getGeometry().getCoordinates();
         Double longitude = coordinates.get(0);
         Double latitude = coordinates.get(1);
 
-        // Obtener propiedades adicionales
+        // Obtener las propiedades adicionales
         String locationType = (String) geoJson.getProperties().get("location_type");
+        String address = (String) geoJson.getProperties().get("address");
 
-        // Crear entidad LocationEntity
+        // Crear la entidad
         LocationEntity location = new LocationEntity();
         location.setLocation_id(System.currentTimeMillis()); // Generar un ID único
         location.setLatitude(latitude);
         location.setLongitude(longitude);
-        location.setPosition(String.format("POINT(%f %f)", longitude, latitude)); // Formato POINT para PostGIS
+        location.setPosition(String.format("POINT(%f %f)", longitude, latitude)); // Convertir a WKT
+        location.setAddress(address);
         location.setLocation_type(locationType);
 
-        // Guardar en la base de datos
+        // Guardar en el repositorio
         locationRepository.saveLocation(location);
     }
 
-    public LocationEntity getLocationById(Long id){
+
+    public LocationEntity getLocationById(Long id) {
         return locationRepository.findLocationById(id);
     }
 
-    public LocationEntity getLocationByType(String location_type){
+    public LocationEntity getLocationByType(String location_type) {
         return locationRepository.findLocationByType(location_type);
     }
 }
+

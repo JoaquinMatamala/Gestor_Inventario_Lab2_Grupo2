@@ -9,10 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 public class DeliveryManEntity {
     private Long deliveryman_id;         // Unique ID
-    private String deliveryman_name;     // Deliveryman name
-    private String deliveryman_email;    // Deliveryman email
-    private String deliveryman_password; // Deliveryman password
-    private String deliveryman_phone;    // Deliveryman phone number
-    private Long deliveryman_home_location;  // Deliveryman home location (FK)
+    private String userId;               // Deliveryman name
     private Long establishment_id;   // Deliveryman establishment (FK)
 }

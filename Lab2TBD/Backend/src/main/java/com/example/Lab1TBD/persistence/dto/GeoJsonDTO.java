@@ -22,3 +22,4 @@ public class GeoJsonDTO {
         private List<Double> coordinates; // Coordenadas de la geometría
     }
 }
+

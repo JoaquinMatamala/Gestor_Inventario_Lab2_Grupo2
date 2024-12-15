@@ -38,19 +38,23 @@ public class LocationRepositoryImp implements LocationRepository {
     @Override
     public void saveLocation(LocationEntity location) {
         try (org.sql2o.Connection con = sql2o.open()) {
-            String sql = "INSERT INTO location (location_id, latitude, longitude, position, location_type) " +
-                    "VALUES (:location_id, :latitude, :longitude, :position, :location_type)";
+            String sql = "INSERT INTO location (location_id, latitude, longitude, position, address, location_type) " +
+                    "VALUES (:location_id, :latitude, :longitude, POINT(:longitude, :latitude), :address, :location_type)";
+
             con.createQuery(sql)
                     .addParameter("location_id", location.getLocation_id())
                     .addParameter("latitude", location.getLatitude())
                     .addParameter("longitude", location.getLongitude())
-                    .addParameter("position", location.getPosition())
+                    .addParameter("address", location.getAddress())
                     .addParameter("location_type", location.getLocation_type())
+
                     .executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+
 
     @Override
     public void deleteLocation(Long location_id) {

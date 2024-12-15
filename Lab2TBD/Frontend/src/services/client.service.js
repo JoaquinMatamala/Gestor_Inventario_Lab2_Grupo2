@@ -3,14 +3,14 @@ import axios from "axios";
 const API_URL = process.env.VUE_APP_BACKEND_IP;
 
 class RegisterService {
-  async register(name, email, address, phone_number, password) {
+  async register(name, email, role, phone_number, password) {
     try {
       const response = await axios.post(
         `${API_URL}/auth/register`,
         {
           name,
           email,
-          address,
+          role,
           phone_number,
           password
         },
@@ -53,29 +53,32 @@ class RegisterService {
 class LoginService {
   async login(email, password) {
     const data = { email, password };
-
+  
     console.log("Datos enviados al backend:", JSON.stringify(data, null, 2));
-
+  
     try {
       const response = await axios.post(`${API_URL}/auth/login`, data);
-
-      // Extraer token y client_id desde la respuesta
-      const { token, client_id } = response.data;
-
-      if (!client_id) {
-        throw new Error("El backend no devolvió un client_id.");
+  
+      // Extraer token, client_id y role desde la respuesta
+      const { token, client_id, role } = response.data;
+  
+      if (!client_id || !role) {
+        throw new Error("El backend no devolvió client_id o role.");
       }
-
-      // Guardar token y client_id en localStorage
+  
+      // Guardar token, client_id y role en localStorage
       localStorage.setItem("jwtToken", token);
       localStorage.setItem("clientId", client_id.toString());
-
-      return { token, client_id };
+      localStorage.setItem("role", role);
+  
+      console.log("Login exitoso:", { token, client_id, role });
+      return { token, client_id, role };
     } catch (error) {
       console.error("Error al iniciar sesión:", error.response?.data || error.message);
       throw error;
     }
   }
+  
 
   async checkToken() {
     try {
