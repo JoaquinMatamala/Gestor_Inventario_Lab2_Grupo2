@@ -7,6 +7,7 @@ import ViewOrders from '../components/ViewOrders.vue';
 import OrderDetail from '../components/OrderDetail.vue';
 import RankingQueries from '../components/RankingQueries.vue';
 import RankingDetail from '../components/RankingDetail.vue';
+import SelectLocation from '@/components/SelectLocation.vue';
 
 const routes = [
   {
@@ -50,8 +51,12 @@ const routes = [
     name: "RankingDetail",
     component: RankingDetail,
   },
-  
-  
+  {
+    path: "/select-location",
+    name: "SelectLocation",
+    component: SelectLocation,
+  },
+
 
 ];
 

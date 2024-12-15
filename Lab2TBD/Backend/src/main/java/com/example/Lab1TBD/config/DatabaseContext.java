@@ -10,6 +10,6 @@ public class DatabaseContext {
     // Configuración básica de la base de datos
     // Procura colocar tus datos para conectarla con tu bases de datos local
     public Sql2o sql2o() {
-        return new Sql2o("jdbc:postgresql://localhost:5432/Lab1TBD", "postgres", "admin");
+        return new Sql2o("jdbc:postgresql://localhost:5432/Lab2TBD", "postgres", "admin");
     }
 }

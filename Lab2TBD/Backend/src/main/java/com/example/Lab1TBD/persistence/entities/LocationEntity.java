@@ -1,7 +1,6 @@
 package com.example.Lab1TBD.persistence.entities;
 
 import lombok.*;
-import org.springframework.data.geo.Point;
 
 @Getter
 @Setter
@@ -12,6 +11,6 @@ public class LocationEntity {
     private Long location_id;       // Unique ID
     private Double latitude;        // Localization latitude
     private Double longitude;       // Localization longitude
-    private Point position;         // Localization position (Point)
+    private String position;         // Localization position (Point)
     private String location_type;   // Localization type (example: establishment, home, etc.)
 }

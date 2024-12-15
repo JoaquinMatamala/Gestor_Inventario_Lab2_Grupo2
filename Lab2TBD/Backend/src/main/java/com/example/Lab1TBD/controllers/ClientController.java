@@ -19,10 +19,10 @@ public class ClientController {
     @PutMapping("/complete-registration/{id}")
     public ResponseEntity<ClientEntity> completeRegistration(
             @PathVariable Long id,
-            @RequestParam String address,
+            @RequestParam Long home_location,
             @RequestParam String phoneNumber) {
         // Llamar al servicio para completar el registro
-        ClientEntity updatedClient = clientService.completeRegistration(id, address, phoneNumber);
+        ClientEntity updatedClient = clientService.completeRegistration(id, home_location, phoneNumber);
 
         if (updatedClient == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Cliente no encontrado

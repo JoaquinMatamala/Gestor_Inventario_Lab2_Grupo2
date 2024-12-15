@@ -41,7 +41,7 @@ public class ClientService {
     }
 
     // Completar el registro del cliente (añadir dirección y teléfono)
-    public ClientEntity completeRegistration(Long id, String address, String phoneNumber) {
+    public ClientEntity completeRegistration(Long id, Long home_location, String phoneNumber) {
         // Buscar cliente por ID
         ClientEntity client = clientRepository.findClientById(id);
         if (client == null) {
@@ -49,7 +49,7 @@ public class ClientService {
         }
 
         // Añadir datos adicionales al cliente
-        client.setAddress(address);
+        client.setHome_location(home_location);
         client.setPhone_number(phoneNumber);
 
         // Guardar los cambios

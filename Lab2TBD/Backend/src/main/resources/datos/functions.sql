@@ -230,3 +230,4 @@ create trigger trg_insert_pos_establishment
                         on establishment
                         for each row
                         execute procedure insert_pos_establishment();
+

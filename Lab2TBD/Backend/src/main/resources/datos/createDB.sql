@@ -1,33 +1,35 @@
 -- Creación de la base de datos
-CREATE DATABASE Lab1TBD;
-CREATE EXTENSION postgis;
+CREATE DATABASE Lab2TBD;
 CREATE EXTENSION plpgsql;
+CREATE EXTENSION postgis;
+
 
 -- Tables creation
-CREATE TABLE delivery_point (
+CREATE TABLE IF NOT EXISTS delivery_point (
     delivery_point_id BIGINT PRIMARY KEY,
     delivery_point_name VARCHAR(255),
     status_point BOOLEAN,
+    rating FLOAT,
     delivery_location_point BIGINT,
     client_id BIGINT
 );
 
-CREATE TABLE establishment (
+CREATE TABLE IF NOT EXISTS establishment (
     establishment_id BIGINT PRIMARY KEY,
     establishment_data VARCHAR(255),
     region_data VARCHAR(255),
     location_id BIGINT
 );
 
-CREATE TABLE location (
+CREATE TABLE IF NOT EXISTS location (
     location_id BIGINT PRIMARY KEY,
-    latitude DOUBLE,
-    longitude DOUBLE,
+    latitude DOUBLE PRECISION,
+    longitude DOUBLE PRECISION,
     position POINT,
     location_type VARCHAR(255)
 );
 
-CREATE TABLE order_detail (
+CREATE TABLE IF NOT EXISTS order_detail (
     order_detail_id BIGINT PRIMARY KEY,
     product_id BIGINT,
     quantity INT,
@@ -35,7 +37,7 @@ CREATE TABLE order_detail (
     order_id BIGINT
 );
 
-CREATE TABLE orders (
+CREATE TABLE IF NOT EXISTS orders (
     order_id BIGINT PRIMARY KEY,
     date TIMESTAMP,
     status VARCHAR(255),
@@ -43,7 +45,7 @@ CREATE TABLE orders (
     client_id BIGINT
 );
 
-CREATE TABLE point_rating (
+CREATE TABLE IF NOT EXISTS point_rating (
     point_rating_id BIGINT PRIMARY KEY,
     point_id BIGINT,
     deliveryman_id BIGINT,
@@ -51,7 +53,7 @@ CREATE TABLE point_rating (
     comment VARCHAR(255)
 );
 
-CREATE TABLE product (
+CREATE TABLE IF NOT EXISTS product (
     product_id BIGINT PRIMARY KEY,
     product_name VARCHAR(255),
     description VARCHAR(255),
@@ -61,13 +63,13 @@ CREATE TABLE product (
     category_id BIGINT
 );
 
-CREATE TABLE category (
+CREATE TABLE IF NOT EXISTS category (
     category_id BIGINT PRIMARY KEY,
     category_name VARCHAR(255)
 );
 
-CREATE TABLE client (
-    client_id BIGINT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS client (
+    client_id serial PRIMARY KEY,
     client_name VARCHAR(255),
     email VARCHAR(255),
     password VARCHAR(255),
@@ -75,7 +77,7 @@ CREATE TABLE client (
     home_location BIGINT
 );
 
-CREATE TABLE delivery_man (
+CREATE TABLE IF NOT EXISTS delivery_man (
     deliveryman_id BIGINT PRIMARY KEY,
     deliveryman_name VARCHAR(255),
     deliveryman_email VARCHAR(255),
@@ -94,10 +96,10 @@ create table if not exists establishment
     establishmet_data                       text,
     establecimientocodigoantiguo            text,
     establecimientocodigomadreantiguo       text,
-    establecimientocodigomadrenuevo         double precision,
+    establecimientocodigomadrenuevo         DOUBLE PRECISION,
     region_id                               integer,
     region_data                             text,
-    seremisaludcodigo_serviciodesaludcodigo double precision,
+    seremisaludcodigo_serviciodesaludcodigo DOUBLE PRECISION,
     seremisaludglosa_serviciodesaludglosa   text,
     tipopertenenciaestabglosa               text,
     tipoestablecimientoglosa                text,
@@ -130,8 +132,8 @@ alter table establishment
 create table if not exists pos_establishments
 (
     establishment_id      integer not null primary key,
-    latitude              double precision,
-    longitude             double precision,
+    latitude              DOUBLE PRECISION,
+    longitude             DOUBLE PRECISION,
     geom                  geometry(Point, 4326)
     );
 
@@ -154,11 +156,11 @@ alter table view_establishment
 -----------------------------------------
 
 DROP TABLE IF EXISTS delivery_point;
-CREATE TABLE delivery_point (
+CREATE TABLE IF NOT EXISTS delivery_point (
     delivery_point_id serial PRIMARY KEY,
     delivery_point_name TEXT,
-    latitude double precision,
-    longitude double precision,
+    latitude DOUBLE PRECISION,
+    longitude DOUBLE PRECISION,
     position TEXT,
     status_point BOOL,
     rating INT,

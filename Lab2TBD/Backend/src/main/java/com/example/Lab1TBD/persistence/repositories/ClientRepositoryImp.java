@@ -54,10 +54,10 @@ public class ClientRepositoryImp implements ClientRepository {
     @Override
     public void saveClient(ClientEntity client) {
         try (org.sql2o.Connection con = sql2o.beginTransaction()) {
-            con.createQuery("INSERT INTO client (client_name, address, email, password, phone_number) " +
-                            "VALUES (:client_name, :address, :email, :password, :phone_number)")
+            con.createQuery("INSERT INTO client (client_name, home_location, email, password, phone_number) " +
+                            "VALUES (:client_name, :home_location, :email, :password, :phone_number)")
                     .addParameter("client_name", client.getClient_name())
-                    .addParameter("address", client.getAddress())
+                    .addParameter("home_location", client.getHome_location())
                     .addParameter("email", client.getEmail())
                     .addParameter("password", client.getPassword())
                     .addParameter("phone_number", client.getPhone_number())
@@ -72,11 +72,11 @@ public class ClientRepositoryImp implements ClientRepository {
     @Override
     public void updateClient(ClientEntity client) {
         try (org.sql2o.Connection con = sql2o.beginTransaction()) {
-            con.createQuery("UPDATE client SET client_name = :client_name, address = :address, " +
+            con.createQuery("UPDATE client SET client_name = :client_name, home_location = :home_location, " +
                             "email = :email, password = :password, phone_number = :phone_number WHERE client_id = :client_id")
                     .addParameter("client_id", client.getClient_id())
                     .addParameter("client_name", client.getClient_name())
-                    .addParameter("address", client.getAddress())
+                    .addParameter("home_location", client.getHome_location())
                     .addParameter("email", client.getEmail())
                     .addParameter("password", client.getPassword())
                     .addParameter("phone_number", client.getPhone_number())
