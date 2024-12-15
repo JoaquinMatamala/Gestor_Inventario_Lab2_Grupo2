@@ -9,6 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 public class DeliveryManEntity {
     private Long deliveryman_id;         // Unique ID
-    private String userId;               // Deliveryman name
+    private String client_id;               // Deliveryman name
     private Long establishment_id;   // Deliveryman establishment (FK)
 }

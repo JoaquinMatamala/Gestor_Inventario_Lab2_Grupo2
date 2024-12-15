@@ -77,11 +77,7 @@ CREATE TABLE IF NOT EXISTS client (
 
 CREATE TABLE IF NOT EXISTS delivery_man (
     deliveryman_id serial PRIMARY KEY,
-    deliveryman_name VARCHAR(255),
-    deliveryman_email VARCHAR(255),
-    deliveryman_password VARCHAR(255),
-    deliveryman_phone VARCHAR(20),
-    deliveryman_home_location BIGINT,
+    client_id BIGINT,
     establishment_id BIGINT
 );
 
