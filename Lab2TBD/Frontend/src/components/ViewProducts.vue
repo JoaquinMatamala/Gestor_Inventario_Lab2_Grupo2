@@ -95,6 +95,7 @@ export default {
         date: new Date().toISOString().slice(0, 19).replace("T", " "),
         status: "zzz",
         total: 0,
+        delivery_point_id : 1,
         client_id: clientId,
       };
 

@@ -24,7 +24,8 @@ public class DeliveryPointService {
     public DeliveryPointEntity getDeliveryPointByName(String name) {
         return deliveryPointRepository.findDeliveryPointByName(name);
     }
-    public void createDeliveryPoint(String name, Boolean status, String comment, Long locationPoint, Long clientId) {
+
+    public DeliveryPointEntity createDeliveryPoint(String name, Boolean status, String comment, Long locationPoint, Long clientId) {
         DeliveryPointEntity deliveryPoint = new DeliveryPointEntity();
         deliveryPoint.setDelivery_point_name(name);
         deliveryPoint.setStatus_point(status);
@@ -35,7 +36,10 @@ public class DeliveryPointService {
         deliveryPoint.setClient_id(clientId);
 
         deliveryPointRepository.saveDeliveryPoint(deliveryPoint);
+        return deliveryPoint; // Retornar el punto de entrega recién creado
     }
 
-
+    public DeliveryPointEntity findDeliveryPointForClientAndLocation(Long clientId, Long locationId) {
+        return deliveryPointRepository.findDeliveryPointForClientAndLocation(clientId, locationId);
+    }
 }

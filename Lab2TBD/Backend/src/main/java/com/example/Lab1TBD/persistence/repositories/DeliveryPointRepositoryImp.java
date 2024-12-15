@@ -44,7 +44,6 @@ public class DeliveryPointRepositoryImp implements DeliveryPointRepository {
             return con.createQuery("SELECT * FROM delivery_point WHERE client_id = :client_id")
                     .addParameter("client_id", client_id)
                     .executeAndFetch(DeliveryPointEntity.class);
-
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -92,5 +91,23 @@ public class DeliveryPointRepositoryImp implements DeliveryPointRepository {
             throw new RuntimeException("Error al guardar el punto de entrega", e);
         }
     }
+
+    @Override
+    public DeliveryPointEntity findDeliveryPointForClientAndLocation(Long clientId, Long locationId) {
+        try (org.sql2o.Connection con = sql2o.open()) {
+            String sql = "SELECT * FROM delivery_point " +
+                    "WHERE client_id = :clientId AND delivery_location_point = :locationId " +
+                    "AND deliveryman_id IS NULL";
+
+            return con.createQuery(sql)
+                    .addParameter("clientId", clientId)
+                    .addParameter("locationId", locationId)
+                    .executeAndFetchFirst(DeliveryPointEntity.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
 }

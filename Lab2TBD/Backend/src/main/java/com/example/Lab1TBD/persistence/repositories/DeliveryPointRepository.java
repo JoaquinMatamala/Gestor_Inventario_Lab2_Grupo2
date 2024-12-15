@@ -16,4 +16,6 @@ public interface DeliveryPointRepository {
     void updateStatusPoint(Long delivery_point_id, Boolean status);
 
     void saveDeliveryPoint(DeliveryPointEntity deliveryPoint);
+
+    DeliveryPointEntity findDeliveryPointForClientAndLocation(Long clientId, Long locationId);
 }

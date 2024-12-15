@@ -66,13 +66,6 @@ public class LocationRepositoryImp implements LocationRepository {
         }
     }
 
-
-
-
-
-
-
-
     @Override
     public void deleteLocation(Long location_id) {
         try (org.sql2o.Connection con = sql2o.open()) {

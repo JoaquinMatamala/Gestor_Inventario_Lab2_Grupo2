@@ -77,4 +77,8 @@ public class ClientService {
         clientRepository.updateHomeLocation(clientId, locationId);
     }
 
+    public Long getClientHomeLocation(Long clientId) {
+        return clientRepository.findClientHomeLocation(clientId);
+    }
+
 }

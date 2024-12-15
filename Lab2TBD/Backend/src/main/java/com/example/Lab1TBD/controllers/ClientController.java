@@ -41,4 +41,15 @@ public class ClientController {
         }
     }
 
+    @GetMapping("/get-home-location/{id}")
+    public ResponseEntity<?> getClientHomeLocation(@PathVariable Long id) {
+        try {
+            Long locationId = clientService.getClientHomeLocation(id);
+            return ResponseEntity.ok(locationId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al obtener ubicación.");
+        }
+    }
+
 }

@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS orders (
     date TIMESTAMP,
     status VARCHAR(255),
     total FLOAT,
-    location_id BIGINT,
+    delivery_point_id BIGINT,
     client_id BIGINT
     );
 

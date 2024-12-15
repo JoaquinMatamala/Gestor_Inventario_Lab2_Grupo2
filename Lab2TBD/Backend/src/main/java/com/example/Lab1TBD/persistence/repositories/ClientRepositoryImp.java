@@ -142,6 +142,18 @@ public class ClientRepositoryImp implements ClientRepository {
         }
     }
 
+    @Override
+    public Long findClientHomeLocation(Long clientId) {
+        try (org.sql2o.Connection con = sql2o.open()) {
+            return con.createQuery("SELECT home_location FROM client WHERE client_id = :clientId")
+                    .addParameter("clientId", clientId)
+                    .executeScalar(Long.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
 
 

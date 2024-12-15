@@ -3,6 +3,7 @@ import axios from "axios";
 const API_LOCATION_URL = process.env.VUE_APP_BACKEND_IP + "/api/locations";
 const API_CLIENT_URL = process.env.VUE_APP_BACKEND_IP + "/client";
 
+
 class LocationService {
   getAuthHeader() {
     const token = localStorage.getItem("jwtToken");
@@ -30,6 +31,8 @@ class LocationService {
       }
     );
   }
+
+  // Obtener la ubicación con el ID más grande
   async getLocationWithMaxId() {
     console.log("📥 Solicitando ubicación con el ID más grande");
     const response = await axios.get(`${API_LOCATION_URL}/max-id`, {
@@ -37,6 +40,8 @@ class LocationService {
     });
     return response.data; // Devuelve la ubicación completa
   }
+
+  
   
 }
 

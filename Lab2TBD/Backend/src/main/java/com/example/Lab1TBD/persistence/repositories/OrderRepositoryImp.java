@@ -62,8 +62,8 @@ public class OrderRepositoryImp implements OrderRepository {
 
     @Override
     public Long saveOrder(OrderEntity order) {
-        String insertQuery = "INSERT INTO orders (date, status, total, client_id) " +
-                "VALUES (:date, :status, :total, :client_id)";
+        String insertQuery = "INSERT INTO orders (date, status, total, client_id, delivery_point_id) " +
+                "VALUES (:date, :status, :total, :client_id, :delivery_point_id)";
 
         // Usamos RETURN_GENERATED_KEYS para obtener el ID generado
         try (org.sql2o.Connection connection = sql2o.open()) {
@@ -72,6 +72,7 @@ public class OrderRepositoryImp implements OrderRepository {
                     .addParameter("status", order.getStatus())
                     .addParameter("total", order.getTotal())
                     .addParameter("client_id", order.getClient_id())
+                    .addParameter("delivery_point_id", order.getDelivery_point_id())
                     .executeUpdate()
                     .getKey(Long.class); // Obtenemos el ID generado como Long
             return generatedId;

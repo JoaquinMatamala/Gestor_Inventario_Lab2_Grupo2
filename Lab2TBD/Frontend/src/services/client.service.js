@@ -100,20 +100,73 @@ class LoginService {
   }
 }
 
-async function validateSession() {
-  const loginService = new LoginService();
-  try {
-    await loginService.checkToken();
-    return true;
-  } catch (error) {
-    alert("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
-    localStorage.removeItem("jwtToken");
-    localStorage.removeItem("userId");
-    window.location.href = "/";
-    return false;
+
+class ClientService {
+  // Obtener la ubicación principal del cliente
+  async getClientHomeLocation(clientId) {
+    try {
+      console.log(`📥 Obteniendo home_location para el cliente con ID: ${clientId}`);
+      const response = await axios.get(`${API_URL}/get-home-location/${clientId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+        },
+      });
+
+      const homeLocation = response.data;
+
+      if (!homeLocation) {
+        console.warn("No se encontró una ubicación principal para el cliente.");
+        alert("No tienes una ubicación principal configurada. Serás redirigido para configurarla.");
+        window.location.href = "/select-location"; // Redirige al usuario
+        return null;
+      }
+
+      return homeLocation; // Retorna la ubicación si existe
+    } catch (error) {
+      console.error("Error al obtener home_location:", error.response?.data || error.message);
+      alert("Hubo un problema al obtener tu ubicación principal. Serás redirigido para configurarla.");
+      window.location.href = "/select-location"; // Redirige al usuario
+      throw new Error("No se pudo obtener la ubicación del cliente.");
+    }
+  }
+
+  // Validar la sesión del cliente
+  async validateSession() {
+    const token = localStorage.getItem("jwtToken");
+    if (!token) {
+      alert("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
+      localStorage.removeItem("jwtToken");
+      localStorage.removeItem("userId");
+      window.location.href = "/";
+      return false;
+    }
+
+    try {
+      const response = await axios.post(
+        `${API_URL}/auth/check-token`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data; // Devuelve la respuesta de validación si es exitosa
+    } catch (error) {
+      console.error("Error al verificar el token:", error.response?.data || error.message);
+      alert("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
+      localStorage.removeItem("jwtToken");
+      localStorage.removeItem("userId");
+      window.location.href = "/";
+      return false;
+    }
   }
 }
 
+
+
+
+export default new ClientService();
 export const registerService = new RegisterService();
 export const loginService = new LoginService();
-export { validateSession };
+
