@@ -15,7 +15,7 @@ public interface DeliveryPointRepository {
     // Actualizar el estado de un punto de entrega (activar/desactivar)
     void updateStatusPoint(Long delivery_point_id, Boolean status);
 
-    void saveDeliveryPoint(DeliveryPointEntity deliveryPoint);
+    Long saveDeliveryPoint(DeliveryPointEntity deliveryPoint);
 
     DeliveryPointEntity findDeliveryPointForClientAndLocation(Long clientId, Long locationId);
 }

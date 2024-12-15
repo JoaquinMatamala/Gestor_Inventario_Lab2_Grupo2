@@ -231,3 +231,36 @@ create trigger trg_insert_pos_establishment
                         for each row
                         execute procedure insert_pos_establishment();
 
+--------
+
+--crear funcion que asigna a una order un id de deliverypoint
+
+-- Crear la función del trigger
+CREATE OR REPLACE FUNCTION link_delivery_point_to_order()
+    RETURNS TRIGGER AS $$
+DECLARE
+    order_id BIGINT;
+BEGIN
+    -- Buscar la última orden creada (se asume que se hace de forma secuencial)
+    SELECT order_id INTO order_id
+    FROM orders
+    WHERE client_id = NEW.client_id
+    ORDER BY date DESC
+    LIMIT 1;
+
+    -- Si encontramos una orden, actualizamos el campo delivery_point_id
+    IF order_id IS NOT NULL THEN
+        UPDATE orders
+        SET delivery_point_id = NEW.delivery_point_id
+        WHERE order_id = order_id;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Crear el trigger
+CREATE TRIGGER after_insert_delivery_point
+    AFTER INSERT ON delivery_point
+    FOR EACH ROW
+EXECUTE FUNCTION link_delivery_point_to_order();

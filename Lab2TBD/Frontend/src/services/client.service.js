@@ -106,7 +106,7 @@ class ClientService {
   async getClientHomeLocation(clientId) {
     try {
       console.log(`📥 Obteniendo home_location para el cliente con ID: ${clientId}`);
-      const response = await axios.get(`${API_URL}/get-home-location/${clientId}`, {
+      const response = await axios.get(`${API_URL}/client/get-home-location/${clientId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
         },

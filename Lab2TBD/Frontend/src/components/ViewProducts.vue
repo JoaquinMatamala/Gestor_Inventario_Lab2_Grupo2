@@ -11,9 +11,9 @@
         </tr>
       </thead>
       <tbody>
-        <tr 
-          v-for="product in products" 
-          :key="product.product_id" 
+        <tr
+          v-for="product in products"
+          :key="product.product_id"
           :class="{ 'out-of-stock': product.product_status?.toLowerCase() === 'agotado' }"
         >
           <td>{{ product.product_name }}</td>
@@ -41,13 +41,15 @@
         </tr>
       </tbody>
     </table>
-    <button class="btn btn-primary w-100 mt-3" @click="createOrderAndDetails">Crear Orden</button>
+    <button class="btn btn-primary w-100 mt-3" @click="startOrderProcess">Crear Orden</button>
   </div>
 </template>
 
 <script>
 import ProductService from "@/services/product.service";
 import OrderService from "@/services/order.service";
+import DeliveryPointService from "@/services/deliverypoint.service";
+import ClientService from "@/services/client.service";
 
 export default {
   name: "ViewProducts",
@@ -60,28 +62,52 @@ export default {
     async fetchProducts() {
       try {
         const fetchedProducts = await ProductService.getAllProducts();
-        this.products = fetchedProducts
-          .map((product) => ({
-            ...product,
-            quantity: 0, // Inicializar la cantidad a comprar en 0
-          }))
-          .sort((a, b) => a.product_name.localeCompare(b.product_name)); // Ordenar alfabéticamente por nombre
+        this.products = fetchedProducts.map((product) => ({
+          ...product,
+          quantity: 0, // Inicializar cantidad en 0
+        }));
       } catch (error) {
         console.error("Error al obtener los productos:", error.response?.data || error.message);
         alert("Error al cargar los productos. Intenta nuevamente más tarde.");
       }
     },
     increaseQuantity(product) {
-      if (product.quantity < product.stock) {
-        product.quantity++;
-      }
+      if (product.quantity < product.stock) product.quantity++;
     },
     decreaseQuantity(product) {
-      if (product.quantity > 0) {
-        product.quantity--;
+      if (product.quantity > 0) product.quantity--;
+    },
+    async createDeliveryPoint() {
+      const name = prompt("Ingrese el nombre del punto de entrega (Ej: Casa, Oficina):", "Punto Principal");
+      const comment = prompt("Ingrese un comentario para el punto de entrega (opcional):", "Sin comentarios");
+      const clientId = parseInt(localStorage.getItem("clientId"), 10);
+
+      try {
+        const locationPoint = await ClientService.getClientHomeLocation(clientId);
+        if (!locationPoint) {
+          alert("Debes establecer una ubicación principal antes de continuar.");
+          this.$router.push("/clientpage/select-location");
+          return null;
+        }
+
+        // Crear el DeliveryPoint y obtener el ID directamente
+        const deliveryPointId = await DeliveryPointService.createDeliveryPoint(
+          name || "Punto Sin Nombre",
+          true, // Status por defecto
+          comment || "Sin comentarios",
+          locationPoint,
+          clientId
+        );
+
+        console.log("✅ DeliveryPoint creado con ID:", deliveryPointId);
+        return deliveryPointId;
+      } catch (error) {
+        console.error("❌ Error al crear el DeliveryPoint:", error.response?.data || error.message);
+        alert("No se pudo crear el Punto de Entrega. Intenta nuevamente.");
+        return null;
       }
     },
-    async createOrderAndDetails() {
+    async createOrderAndDetails(deliveryPointId) {
       const selectedProducts = this.products.filter((product) => product.quantity > 0);
 
       if (selectedProducts.length === 0) {
@@ -91,18 +117,24 @@ export default {
 
       const clientId = parseInt(localStorage.getItem("clientId"), 10);
 
-      const orderData = {
-        date: new Date().toISOString().slice(0, 19).replace("T", " "),
-        status: "zzz",
-        total: 0,
-        delivery_point_id : 1,
-        client_id: clientId,
-      };
-
       try {
+        console.log("📦 Creando orden con delivery_point_id:", deliveryPointId);
+
+        const orderData = {
+          date: new Date().toISOString().slice(0, 19).replace("T", " "),
+          status: "Pendiente",
+          total: selectedProducts.reduce((sum, product) => sum + product.price * product.quantity, 0),
+          delivery_point_id: deliveryPointId,
+          client_id: clientId,
+        };
+
         const orderId = await OrderService.createOrder(orderData);
 
-        console.log("ID de la orden creada:", orderId);
+        if (!orderId) {
+          throw new Error("El backend no retornó un ID válido para la orden.");
+        }
+
+        console.log("📝 ID de la orden creada:", orderId);
 
         for (const product of selectedProducts) {
           const orderDetail = {
@@ -114,14 +146,29 @@ export default {
 
           await OrderService.createOrderDetail(orderDetail);
         }
-        const newStatus = "Pendiente"; 
-        await OrderService.updateOrderStatus(orderId, newStatus);
 
         alert("Orden y detalles creados exitosamente.");
-        this.$router.push("/clientpage/orders"); // Redirigir a la página de órdenes
+        this.$router.push("/clientpage/orders");
       } catch (error) {
-        console.error("Error al crear la orden o sus detalles:", error.response?.data || error.message);
+        console.error("❌ Error al crear la orden o sus detalles:", error.response?.data || error.message);
         alert("Hubo un error al crear la orden. Intenta nuevamente más tarde.");
+      }
+    },
+    async startOrderProcess() {
+      try {
+        console.log("🔄 Iniciando proceso de creación de orden...");
+        const deliveryPointId = await this.createDeliveryPoint();
+        console.log("🚚 ID del DeliveryPoint:--------------------------", deliveryPointId);
+
+        if (deliveryPointId) {
+          console.log("✅ DeliveryPoint creado con ID:", deliveryPointId);
+          await this.createOrderAndDetails(deliveryPointId);
+        } else {
+          console.warn("⚠️ No se pudo crear u obtener un DeliveryPoint.");
+        }
+      } catch (error) {
+        console.error("❌ Error en el proceso de creación de la orden:", error);
+        alert("Hubo un error al procesar tu orden. Intenta nuevamente.");
       }
     },
     formatCurrency(value) {
@@ -179,7 +226,7 @@ h2 {
 }
 
 .out-of-stock {
-  background-color: #f5c6cb !important; /* Fondo rojo claro */
-  color: #721c24 !important; /* Texto oscuro para mejor contraste */
+  background-color: #f5c6cb !important;
+  color: #721c24 !important;
 }
 </style>

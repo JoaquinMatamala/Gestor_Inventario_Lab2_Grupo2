@@ -76,21 +76,27 @@ public class DeliveryPointRepositoryImp implements DeliveryPointRepository {
     }
 
     @Override
-    public void saveDeliveryPoint(DeliveryPointEntity deliveryPoint) {
+    public Long saveDeliveryPoint(DeliveryPointEntity deliveryPoint) {
         try (org.sql2o.Connection con = sql2o.open()) {
-            con.createQuery("INSERT INTO delivery_point (delivery_point_name, status_point, rating, comment, delivery_location_point, deliveryman_id, client_id) " +
-                            "VALUES (:delivery_point_name, :status_point, NULL, :comment, :delivery_location_point, NULL, :client_id)")
+            // Ejecutar la consulta y obtener el ID generado
+            Long generatedId = con.createQuery(
+                            "INSERT INTO delivery_point (delivery_point_name, status_point, rating, comment, delivery_location_point, deliveryman_id, client_id) " +
+                                    "VALUES (:delivery_point_name, :status_point, NULL, :comment, :delivery_location_point, NULL, :client_id)", true) // `true` indica que queremos el ID generado
                     .addParameter("delivery_point_name", deliveryPoint.getDelivery_point_name())
                     .addParameter("status_point", deliveryPoint.getStatus_point())
                     .addParameter("comment", deliveryPoint.getComment())
                     .addParameter("delivery_location_point", deliveryPoint.getDelivery_location_point())
                     .addParameter("client_id", deliveryPoint.getClient_id())
-                    .executeUpdate();
+                    .executeUpdate()
+                    .getKey(Long.class); // Obtener la clave generada como Long
+
+            return generatedId;
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Error al guardar el punto de entrega", e);
         }
     }
+
 
     @Override
     public DeliveryPointEntity findDeliveryPointForClientAndLocation(Long clientId, Long locationId) {

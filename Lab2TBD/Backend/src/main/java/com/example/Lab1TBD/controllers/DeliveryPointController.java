@@ -33,19 +33,19 @@ public class DeliveryPointController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createDeliveryPoint(@RequestBody DeliveryPointEntity deliveryPoint) {
+    public ResponseEntity<Long> createDeliveryPoint(@RequestBody DeliveryPointEntity deliveryPoint) {
         try {
-            deliveryPointService.createDeliveryPoint(
+            Long generatedId = deliveryPointService.createDeliveryPoint(
                     deliveryPoint.getDelivery_point_name(),
                     deliveryPoint.getStatus_point(),
                     deliveryPoint.getComment(),
                     deliveryPoint.getDelivery_location_point(),
                     deliveryPoint.getClient_id()
             );
-            return ResponseEntity.ok("Punto de entrega creado con éxito");
+            return ResponseEntity.ok(generatedId); // Retornar solo el ID generado
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(500).body("Error al crear el punto de entrega");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 

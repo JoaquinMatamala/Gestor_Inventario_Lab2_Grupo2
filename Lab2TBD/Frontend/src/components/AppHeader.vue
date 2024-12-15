@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { validateSession } from "@/services/client.service";
+import ClientService from "@/services/client.service";
 
 export default {
   name: "AppHeader",
@@ -24,25 +24,25 @@ export default {
       this.$router.push("/"); // Redirige a la página de inicio
     },
     async goToBuy() {
-      const isValid = await validateSession(); // Valida la sesión
+      const isValid = await ClientService.validateSession(); // Valida la sesión
       if (isValid) {
         this.$router.push("/products"); // Redirige al menú de cliente
       }
     },
     async goToTasks() {
-      const isValid = await validateSession(); // Valida la sesión
+      const isValid = await ClientService.validateSession(); // Valida la sesión
       if (isValid) {
         this.$router.push("/clientpage/orders");
       }
     },
     async goToRanking() {
-      const isValid = await validateSession(); // Valida la sesión
+      const isValid = await ClientService.validateSession(); // Valida la sesión
       if (isValid) {
         this.$router.push("/ranking-queries"); //
       }
     },
     async goToAddress() {
-      const isValid = await validateSession(); // Valida la sesión
+      const isValid = await ClientService.validateSession(); // Valida la sesión
       if (isValid) {
         this.$router.push("/select-location"); // Cambia esta ruta según tu implementación
       }

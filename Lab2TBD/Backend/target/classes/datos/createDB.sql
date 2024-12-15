@@ -6,7 +6,7 @@ CREATE EXTENSION IF NOT EXISTS postgis;
 
 -- Tabla: Delivery Point
 CREATE TABLE IF NOT EXISTS delivery_point (
-    delivery_point_id BIGINT PRIMARY KEY,
+    delivery_point_id serial PRIMARY KEY,
     delivery_point_name VARCHAR(255),
     status_point BOOLEAN,
     rating FLOAT,
