@@ -1,65 +1,146 @@
+## Directorio
 
-# Lab1TBD
+Localizacion de archivos.
 
-Laboratorio 1 Taller Base de Datos.
+## Backend
 
-## DataBase
-- Crear la base de datos en PostgreSQL (pgAdmin 4) con el nombre de "Lab1TBD":
-- En "\Backend\src\main\resources\datos" encontrarás el script "createDB.sql" para crear la base de datos.
-- Ejecutar la primera linea como una query en pgAdmin 4 (o directamente usar la intefaz de usuario para crearla con el nombre especificado).
-- Ejecutar el resto del script "createDB.sql" como query dentro de la base de datos "Lab1TBD" creada.
-- En "\Backend\src\main\resources\datos" encontrarás el script "functions.sql" para la crear los triggers.
-- Copiar el query en pgAdmin 4 para que se generen los triggers.
+El backend cuenta con los siguientes archivos:
 
-## BACKEND
-- En aplication.properties se define el puerto que se usará para el backend, por defecto será el 8070.
+### config
+    - CorsConfig
+    - DataBaseContext
+    - JwtFilter
+    - JwtUtil
+    - SecurityConfig
 
-- En la ruta principal de la aplicación, en el package "config" se encuentra el archivo "DataBaseContext.java", 
-  el cual contiene la configuración de la base de datos, en este caso PostgreSQL. De ser necesario, deberás ingresar tus
-  propias credenciales y/o el puerto que estés utilizando para la base de datos.
+### controllers
+    - AuditController
+    - AuthController
+    - CategoryController
+    - ClientController
+    - DeliveryManController
+    - DeliveryPointController
+    - EstablishmentController
+    - LocationController
+    - OrderController
+    - OrderDetailController
+    - ProductController
+    - RaitingController
 
-- Si todo está correctamente configurado, al ejecutar "Lab1TBDApplication.java" se iniciará el backend en el puerto especificado.
+### persistance
+    - dto
+        - GeoJsonDTO
+        - LoginDto
+        - RegisterDto
+    - entities
+        - AuditEntity
+        - CategoryEntity
+        - ClientEntity
+        - DeliveryManEntity
+        - DeliveryPointEntity
+        - EstablishmentEntity
+        - LocationEntity
+        - OrderEntity
+        - OrderDetailEntity
+        - ProductEntity
+        - RaitingEntity
+### repositories
+    - Auditrepository
+        - Categoryrepository
+        - Clientrepository
+        - DeliveryManrepository
+        - DeliveryPointrepository
+        - Establishmentrepository
+        - Locationrepository
+        - Orderrepository
+        - OrderDetailrepository
+        - Productrepository
+        - Raitingrepository
+        - AuditrepositoryImp
+        - CategoryrepositoryImp
+        - ClientrepositoryImp
+        - DeliveryManrepositoryImp
+        - DeliveryPointrepositoryImp
+        - EstablishmentrepositoryImp
+        - LocationrepositoryImp
+        - OrderrepositoryImp
+        - OrderDetailrepositoryImp
+        - ProductrepositoryImp
+        - RaitingrepositoryImp
+### services
+    - AuditService
+        - CategoryService
+        - ClientService
+        - DeliveryManService
+        - DeliveryPointService
+        - EstablishmentService
+        - LocationService
+        - OrderService
+        - OrderDetailService
+        - ProductService
+        - RaitingService
 
-## FRONTEND
+### datos
+    - createDB.sql
+    - functions.sql
 
-### Requisitos:
 
-NodeJS (npm):
+## Frontend
 
-### Ir a la carpeta del frontend.
+El Frontend cuenta con los siguientes archivos:
 
-```bash
-  cd ./Frontend
-```
-### Instalación de paquetes.
+## components
+    - AdminPage.vue
+    - AppHeader.vue
+    - DeliveryyMainPage.vue
+    - DeliveryManagment.vue
+    - DeliveryPage.vue
+    - LocationViewer.vue
+    - LoginForm.vue
+    - MainPage.vue
+    - NewEstablishment.vue
+    - OrdeDetail.vue
+    - RankingDetail.vue
+    - RankingQueries.vue
+    - RegisterForms.vue  
+    - ReviewDeliveryPoint.vue
+    - SelectLocation.vue
+    - StoreManagement.vue
+    - ToDoDeliveries.vue
+    - ViewOrders.vue
+    - ViewProducts.vue
 
-```bash
-  npm install
-```
-### Compilación y recarga en host para desarrollo.
+## router
 
-```bash
-  npm run serve
-```
+    - index.js 
 
-### Compilación y minimización de producción.
+## services    
 
-```bash
-  npm run build
-```
+    - audit.service.js
+    - client.service.js
+    - deliveryman.service.js
+    - deliverypoint.service.js
+    - establishment.service.js
+    - location.service.js
+    - order.service.js
+    - product.service.js
 
-### Lints y archivos de arreglos.
+## assets
 
-```bash
-  npm run lint
-```
+    - logo.png (por defecto)
+##
+- App.vue
+- main.js
+##
+Otros archivos estan fuera de la carpeta src, los mas destacable son:
 
-## Versiones
+##
+- .env
+- babel.config.js
+- jsconnfig.json  
+- package-lok.json 
+- package.json  
+- vue.config.js 
 
-- Project: Maven
-- Language: Java
-- Spring Boot: 3.3.2
-- Packaging: Jar
-- Java: 17
-
+##
 
