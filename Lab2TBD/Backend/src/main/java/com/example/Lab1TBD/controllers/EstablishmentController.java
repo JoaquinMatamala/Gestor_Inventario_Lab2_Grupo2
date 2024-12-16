@@ -38,4 +38,9 @@ public class EstablishmentController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @GetMapping("/getdetails/{id}")
+    public ResponseEntity<String> getAddressForLocation(@PathVariable Long id) {
+        return ResponseEntity.ok(establishmentService.getAddressForLocation(id));
+    }
+
 }

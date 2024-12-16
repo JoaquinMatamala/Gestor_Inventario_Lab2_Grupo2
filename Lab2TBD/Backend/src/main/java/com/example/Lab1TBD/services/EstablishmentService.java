@@ -28,5 +28,8 @@ public class EstablishmentService {
     public void saveEstablishment(EstablishmentEntity establishment){
         establishmentRepository.saveEstablishment(establishment);
     }
+    public String getAddressForLocation(Long locationId) {
+        return establishmentRepository.getAddressByLocationId(locationId);
+    }
 
 }
