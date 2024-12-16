@@ -15,7 +15,7 @@ Crear la base de datos en PostgreSQL (pgAdmin 4) con el nombre de "Lab2TBD":
 - Copiar el query en pgAdmin 4 para que se generen los triggers.
 
 
-## BACKEND
+## Backend
 
 En aplication.properties se define el puerto que se usará para el backend, por defecto será el 8070.
 
@@ -23,7 +23,7 @@ En la ruta principal de la aplicación, en el package "config" se encuentra el a
 
 Si todo está correctamente configurado, al ejecutar "Lab2TBDApplication.java" se iniciará el backend en el puerto especificado.
 
-## FRONTEND
+## Frontend
 Requisitos:
 - NodeJS (npm):
 
