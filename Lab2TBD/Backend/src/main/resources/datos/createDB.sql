@@ -94,59 +94,22 @@ CREATE TABLE IF NOT EXISTS rating (
     address VARCHAR(255),
     rating FLOAT
 );
-
-
-
-------------------------------------------------------------- nuevo
-
-create table if not exists establishment
-(
-    establishment_id                        BIGINT,
-    establishmet_data                       text,
-    region_data                             text,
-    latitude                                text,
-    longitude                               text
+CREATE TABLE IF NOT EXISTS delivery_zone (
+    zone_id SERIAL PRIMARY KEY,
+    delivery_establishment_id BIGINT,
+    delivery_polygon GEOMETRY(POLYGON, 4326)
 );
 
-alter table establishment
-    owner to postgres;
-
-create table if not exists pos_establishments
-(
-    establishment_id      BIGINT not null primary key,
-    latitude              DOUBLE PRECISION,
-    longitude             DOUBLE PRECISION,
-    geom                  geometry(Point, 4326)
+CREATE TABLE IF NOT EXISTS restricted_zone (
+    zone_id SERIAL PRIMARY KEY,
+    restricted_address VARCHAR(255),
+    restricted_polygon GEOMETRY(POLYGON, 4326),
+    rating FLOAT
     );
-
-alter table pos_establishments
-    owner to postgres;
-
-create view view_establishment (establishment_id, establishment_data, region_data, latitude, longitude, position) as
-SELECT e.establishment_id,
-       e.establishment_data,
-       e.region_data,
-       pe.latitude,
-       pe.longitude,
-       pe.geom AS position
-FROM establishment e
-         LEFT JOIN pos_establishments pe ON e.establishment_id = pe.establishment_id;
-
-alter table view_establishment
-    owner to postgres;
-
------------------------------------------
 
 ------------------------------------------
 
 -- Poblado de las tablas
-INSERT INTO client (client_name, email, password, phone_number,home_location,role) VALUES
-                                                                                       ('Juan Perez', 'jp@gmail.com', '123ahbz#2', '+56987654321', 0,'CLIENTE'),
-                                                                                       ('Maria Rodriguez', 'maria@gmail.com', '456ahbz#2', '+56987654350',1,'CLIENTE'),
-                                                                                       ('Pedro Gomez', 'pedro@gmail.com', '789ahbz#2', '+56987667321',2,'ADMIN'),
-                                                                                       ('Ana Martinez', 'ana@gmail.com', '123ahbz#2', '+56984447321',3,'ADMIN'),
-                                                                                       ('Carlos Sanchez', 'carlos@gmail.com', '456ahbz#2', '+56987654891',4,'CLIENTE');
-
 INSERT INTO category (category_name) VALUES
      ('Electrodomésticos'),
      ('Ropa'),
@@ -167,24 +130,7 @@ INSERT INTO product (product_name, description, price, stock, product_status, ca
            ('Cerveza', 'Corona', 2000, 10, 'Disponible', 5),
            ('Purple Kush', 'Fineza', 20000, 5, 'Disponible', 5);
 
-INSERT INTO orders (date, status, total, client_id) VALUES
-               ('2023-06-01', 'Pendiente', 200000, 1),
-               ('2023-06-02', 'Entregado', 300000, 2),
-               ('2023-06-03', 'Pendiente', 150000, 3),
-               ('2023-06-04', 'Pendiente', 250000, 4),
-               ('2023-06-05', 'Pendiente', 180000, 5);
 
-INSERT INTO order_detail (quantity, price, order_id, product_id) VALUES
-                           (2, 500000, 1, 1),
-                           (1, 300000, 2, 2),
-                           (3, 150000, 3, 3),
-                           (2, 250000, 4, 4),
-                           (1, 180000, 5, 5);
-
-INSERT INTO establishment (establishment_data, region_data, location_id) VALUES
-                                  ('Preunic', 'Metropolitana', 1),
-                                  ('Calzados beba', 'Valparaiso', 2),
-                                  ('Fruna', 'Coquimbo', 3);
 
 -- Consulta para calcular los ingresos por producto agrupados por categoría y porcentaje de ventas
 WITH TotalIncome AS (
@@ -213,75 +159,77 @@ SELECT
 FROM ProductIncome pi
 ORDER BY pi.category_name, pi.product_income DESC;
 
------------- datos para el posgis
 
-CREATE TABLE IF NOT EXISTS areas_geograficas (
-    id SERIAL PRIMARY KEY,
-    nombre VARCHAR(255),
-    area GEOMETRY(POLYGON, 4326) -- Representación geométrica del área
-);
 
-INSERT INTO areas_geograficas (nombre, area)
-VALUES (
-           'Zona de Entrega 1',
-           ST_GeomFromText('POLYGON((-99.2 19.4, -99.1 19.4, -99.1 19.3, -99.2 19.3, -99.2 19.4))', 4326)
-);
 
----------- verifica que el punto esta dentro del area -----
+------------ POSTGIS
 
+-- Consulta para determinar si un cliente se encuentra dentro de una zona de reparto
+WITH client_location AS (
+    -- Obtener la geometría (position) de la ubicación del cliente
+    SELECT
+        l.position AS client_position
+    FROM
+        client c
+            JOIN
+        location l ON c.home_location = l.location_id
+    WHERE
+        c.client_id = 5 -- Reemplazar por id del cliente a evaluar
+)
+SELECT
+    CASE
+        WHEN EXISTS (
+            SELECT 1
+            FROM delivery_zone dz, client_location cl
+            WHERE ST_Within(cl.client_position, dz.delivery_polygon)
+        )
+            THEN 'Dentro de zona de reparto'
+        ELSE 'Fuera de zona de reparto'
+        END AS zone_status;
+
+-- Listar los repartidores que han entregado dentro de una zona de reparto (a partir de un establishment)
+
+WITH delivery_polygon AS (
+    -- Obtener el polígono de la zona de reparto asociada al establecimiento
+    SELECT dz.delivery_polygon
+    FROM delivery_zone dz
+    WHERE dz.delivery_establishment_id = 3
+),
+     valid_delivery_points AS (
+         -- Buscar delivery_points que tengan rating y deliveryman_id válidos
+         SELECT dp.deliveryman_id
+         FROM delivery_point dp
+                  JOIN location l ON dp.delivery_location_point = l.location_id
+                  CROSS JOIN delivery_polygon dz
+         WHERE dp.rating IS NOT NULL
+           AND dp.deliveryman_id IS NOT NULL
+           AND ST_Within(l.position, dz.delivery_polygon) -- Verificar que la ubicación está dentro del polígono
+     )
+SELECT DISTINCT dm.deliveryman_id AS repartidor_id, c.client_name AS repartidor_nombre
+FROM valid_delivery_points vdp
+         JOIN delivery_man dm ON vdp.deliveryman_id = dm.deliveryman_id
+         JOIN client c ON dm.client_id = c.client_id;
+
+
+-- Query para saber si una dirección de entrega se encuentra en una zona restringida
 SELECT
     dp.delivery_point_id,
-    dp.delivery_point_name,
-    dp.comment,
-    l.position,
-    ag.nombre AS area_nombre,
-    ST_Within(l.position, ag.area) AS dentro_del_area
-FROM
-    delivery_point dp
-        JOIN
-    location l ON dp.delivery_location_point = l.location_id
-        JOIN
-    areas_geograficas ag ON ST_Within(l.position, ag.area)
-WHERE
-    dp.status_point = TRUE; -- Filtrar solo puntos activos
+    l.address AS delivery_address,
+    CASE
+        WHEN EXISTS (
+            SELECT 1
+            FROM restricted_zone rz
+            WHERE ST_Within(l.position, rz.restricted_polygon)
+        ) THEN 'Dentro de zona restringida'
+        ELSE 'Fuera de zona restringida'
+        END AS restriction_status
+FROM delivery_point dp
+         JOIN location l ON dp.delivery_location_point = l.location_id
+WHERE dp.delivery_point_id = 5;
 
+-- Queries para obtener geojson de las zonas de reparto y zonas restringidas
+SELECT ST_AsGeoJSON(restricted_polygon) AS geojson
+FROM restricted_zone;
 
---------- verifica si un establecimiento esta den del area
-
-SELECT
-    ve.establishment_id,
-    ve.establishment_data,
-    ve.region_data,
-    ag.nombre AS area_nombre,
-    ST_Within(ve.position, ag.area) AS dentro_del_area
-FROM
-    view_establishment ve
-        JOIN
-    areas_geograficas ag ON ST_Within(ve.position, ag.area);
-
--------------------------------------------------- indices
-
-CREATE INDEX idx_location_position ON location USING GIST (position);
-CREATE INDEX idx_areas_geograficas_area ON areas_geograficas USING GIST (area);
-CREATE INDEX idx_pos_establishments_geom ON pos_establishments USING GIST (geom);
-
------------------------- Calcular la distancia a los puntos fuera del área
-
-SELECT
-    dp.delivery_point_id,
-    dp.delivery_point_name,
-    dp.comment,
-    l.position,
-    ag.nombre AS area_nombre,
-    ST_Distance(l.position, ag.area) AS distancia_al_area
-FROM
-    delivery_point dp
-        JOIN
-    location l ON dp.delivery_location_point = l.location_id
-        JOIN
-    areas_geograficas ag ON NOT ST_Within(l.position, ag.area)
-WHERE
-    dp.status_point = TRUE -- Solo puntos activos
-ORDER BY
-    distancia_al_area ASC
-    LIMIT 5; -- Obtener los 5 puntos más cercanos
+SELECT ST_AsGeoJSON(delivery_polygon) AS geojson
+FROM delivery_zone;

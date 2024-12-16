@@ -3,7 +3,6 @@
     <h2 class="text-center mb-4">Panel de Repartidor</h2>
     <div class="button-group text-center">
       <button @click="goToDeliveryPage" class="btn btn-primary btn-lg mb-3">Revisar órdenes</button>
-      <button @click="goToVerifyAddresses" class="btn btn-primary btn-lg mb-3">Review de punto de entrega</button>
       <!-- Nuevo botón para redirigir a la ruta de entregas -->
       <button @click="goToDeliveriesPage" class="btn btn-primary btn-lg mb-3">Ver entregas</button>
     </div>
@@ -16,9 +15,6 @@ export default {
   methods: {
     goToDeliveryPage() {
       this.$router.push("/del-page/deliveryman");
-    },
-    goToVerifyAddresses() {
-      this.$router.push("/del-page/review-point");
     },
     // Método para redirigir a la página de entregas
     goToDeliveriesPage() {

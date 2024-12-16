@@ -309,3 +309,76 @@ CREATE TRIGGER trigger_update_order_status_after_update
     FOR EACH ROW
     WHEN (NEW.  deliveryman_id IS DISTINCT FROM OLD.deliveryman_id AND NEW.deliveryman_id IS NOT NULL)
 EXECUTE FUNCTION update_order_status_on_deliveryman_change();
+----- Trigger para delivery_zone
+CREATE OR REPLACE FUNCTION create_delivery_zone_for_establishment()
+    RETURNS TRIGGER AS $$
+DECLARE
+    loc_lat FLOAT; -- Cambié el nombre de la variable
+    loc_lng FLOAT; -- Cambié el nombre de la variable
+    polygon GEOMETRY(POLYGON, 4326);
+BEGIN
+    -- Obtener latitude y longitude de la tabla location usando el location_id
+    SELECT l.latitude, l.longitude
+    INTO loc_lat, loc_lng
+    FROM location AS l
+    WHERE l.location_id = NEW.location_id;
+
+    -- Verificar si las coordenadas existen
+    IF loc_lat IS NULL OR loc_lng IS NULL THEN
+        RAISE EXCEPTION 'No se encontraron coordenadas para la ubicación del establecimiento';
+    END IF;
+
+    -- Crear un polígono circular de 10 km a la redonda usando ST_Buffer
+    polygon := ST_Transform(
+            ST_Buffer(
+                    ST_Transform(
+                            ST_SetSRID(ST_MakePoint(loc_lng, loc_lat), 4326), -- Crear punto con SRID 4326
+                            3857 -- Transformar a proyección métrica para el buffer
+                    ),
+                    5000 -- 10 km = 10000 metros
+            ),
+            4326 -- Volver a transformar a SRID 4326
+               );
+
+    -- Insertar en la tabla delivery_zone
+    INSERT INTO delivery_zone (delivery_establishment_id, delivery_polygon)
+    VALUES (NEW.establishment_id, polygon);
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER trigger_create_delivery_zone
+    AFTER INSERT ON establishment
+    FOR EACH ROW
+EXECUTE FUNCTION create_delivery_zone_for_establishment();
+
+--- Trigger para añadir una zona restringida a la tabla restricted_zone en caso de bajar de 3 el rating de una dirección
+CREATE OR REPLACE FUNCTION manage_restricted_zones()
+    RETURNS TRIGGER AS $$
+DECLARE
+    location_id BIGINT;
+    position GEOMETRY(POINT, 4326);
+BEGIN
+    -- Eliminar todas las zonas restringidas existentes
+    DELETE FROM restricted_zone;
+
+    -- Insertar zonas restringidas para todas las direcciones con rating < 3
+    INSERT INTO restricted_zone (restricted_address, restricted_polygon, rating)
+    SELECT
+        r.address,
+        ST_Buffer(l.position::geography, 2000)::geometry AS restricted_polygon,
+        r.rating
+    FROM rating r
+             JOIN location l ON r.address = l.address
+    WHERE r.rating < 3;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_manage_restricted_zones
+    AFTER INSERT OR UPDATE OF rating ON rating
+    FOR EACH ROW
+EXECUTE FUNCTION manage_restricted_zones();
