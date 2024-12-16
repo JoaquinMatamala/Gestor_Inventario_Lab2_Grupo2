@@ -56,7 +56,7 @@ export default {
       this.$router.push("/admin"); // Página de administrador
     } 
     else if (role === "REPARTIDOR") {
-      this.$router.push("/deliveryman"); // Página de repartidor
+      this.$router.push("/del-page"); // Página de repartidor
     } 
     else {
       this.$router.push("/products"); // Página de usuario

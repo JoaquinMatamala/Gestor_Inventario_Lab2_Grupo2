@@ -136,7 +136,7 @@ class ClientService {
     if (!token) {
       alert("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
       localStorage.removeItem("jwtToken");
-      localStorage.removeItem("userId");
+      localStorage.removeItem("clientId");
       window.location.href = "/";
       return false;
     }
@@ -156,7 +156,7 @@ class ClientService {
       console.error("Error al verificar el token:", error.response?.data || error.message);
       alert("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
       localStorage.removeItem("jwtToken");
-      localStorage.removeItem("userId");
+      localStorage.removeItem("clientId");
       window.location.href = "/";
       return false;
     }

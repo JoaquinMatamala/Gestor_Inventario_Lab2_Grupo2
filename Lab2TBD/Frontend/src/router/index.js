@@ -16,6 +16,8 @@ import DeliveryManagement from '../components/DeliveryManagement.vue';
 import NewEstablishment from '@/components/NewEstablishment.vue';
 import LocationViewer from '@/components/LocationViewer.vue';
 import DeliveryPage from '@/components/DeliveryPage.vue';
+import DeliveryMainPage from '@/components/DeliveryMainPage.vue';
+import ReviewDeliveryPoint from '@/components/ReviewDeliveryPoint.vue';
 
 const routes = [
   {
@@ -92,9 +94,19 @@ const routes = [
     props: (route) => ({ locationId: Number(route.query.locationId) }), // Recibe query param como prop
   },
   {
-    path: '/deliveryman',
+    path: '/del-page',
+    name: 'DeliveryMainPage',
+    component: DeliveryMainPage,
+  },
+  {
+    path: '/del-page/deliveryman',
     name: 'DeliveryMan',
     component: DeliveryPage,
+  },
+  {
+    path: '/del-page/review-point',
+    name: 'ReviewDeliveryPoint',
+    component: ReviewDeliveryPoint,
   },
 ];
 

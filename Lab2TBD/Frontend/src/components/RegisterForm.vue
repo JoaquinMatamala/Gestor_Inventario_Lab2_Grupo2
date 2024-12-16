@@ -165,4 +165,3 @@ h2 {
   box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
 }
 </style>
-w-100

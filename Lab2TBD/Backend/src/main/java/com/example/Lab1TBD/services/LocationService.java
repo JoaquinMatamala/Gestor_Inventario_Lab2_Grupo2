@@ -14,6 +14,15 @@ public class LocationService {
     @Autowired
     private LocationRepository locationRepository;
 
+    // DEFAULT ------------------------------------------------------------------------------------
+    public List<LocationEntity> getAllLocations(){
+        return locationRepository.findAllLocations();
+    }
+
+    public LocationEntity getLocationById(Long id) {
+        return locationRepository.findLocationById(id);
+    }
+
     public void saveLocation(GeoJsonDTO geoJson) {
         String type = geoJson.getGeometry().getType();
         if (!"Point".equals(type)) {
@@ -40,19 +49,22 @@ public class LocationService {
         // Guardar en el repositorio
         locationRepository.saveLocation(location);
     }
+
+    public void deleteLocationById(Long location_id){
+        locationRepository.deleteLocationById(location_id);
+    }
+
     public LocationEntity getLocationWithMaxId() {
         return locationRepository.findLocationWithMaxId();
     }
 
 
-    public LocationEntity getLocationById(Long id) {
-        return locationRepository.findLocationById(id);
-    }
-
-    public LocationEntity getLocationByType(String location_type) {
+    public List<LocationEntity> getLocationByType(String location_type) {
         return locationRepository.findLocationByType(location_type);
     }
 
-
+    public List<LocationEntity> getLocationByAddress(String address){
+        return locationRepository.findLocationByAddress(address);
+    }
 }
 

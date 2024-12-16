@@ -1,6 +1,32 @@
 <template>
   <div class="data-container">
     <h2 class="text-center mb-4">Órdenes Disponibles</h2>
+
+    <!-- Tabla de "Por entregar" -->
+    <div v-if="deliveryPoints.length > 0" class="mb-5">
+      <h3 class="text-center">Órdenes Aceptadas</h3>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>ID Orden</th>
+            <th>Nombre Cliente</th>
+            <th>Estado</th>
+            <th>Dirección</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="point in deliveryPoints" :key="point.delivery_point_id">
+            <td>{{ point.delivery_point_id }}</td>
+            <td>{{ point.client_name }}</td>
+            <td>{{ point.status }}</td>
+            <td>{{ point.address }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Tabla de órdenes disponibles -->
+    <h3 class="text-center">Órdenes Disponibles</h3>
     <table class="table table-striped">
       <thead>
         <tr>
@@ -13,9 +39,12 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="order in orders" :key="order.order_id">
+        <tr
+          v-for="order in filteredOrders"
+          :key="order.order_id"
+        >
           <td>{{ order.order_id }}</td>
-          <td>{{ order.client_name }}</td> <!-- Mostrar nombre del cliente -->
+          <td>{{ order.client_name }}</td>
           <td>{{ order.status }}</td>
           <td>
             {{ order.address }}
@@ -28,7 +57,10 @@
           </td>
           <td>{{ new Date(order.date).toLocaleDateString() }}</td>
           <td>
-            <button class="btn btn-info btn-sm">
+            <button
+              class="btn btn-info btn-sm"
+              @click="acceptOrder(order.delivery_point_id)"
+            >
               Aceptar
             </button>
           </td>
@@ -36,81 +68,116 @@
       </tbody>
     </table>
 
-    <div v-if="selectedOrderDetails" class="order-details mt-4">
-      <h3>Detalles de la Orden #{{ selectedOrderDetails[0]?.order_id }}</h3>
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>Producto</th>
-            <th>Cantidad</th>
-            <th>Precio</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="detail in selectedOrderDetails" :key="detail.product_id">
-            <td>{{ detail.product_name }}</td>
-            <td>{{ detail.quantity }}</td>
-            <td>${{ detail.price.toFixed(2) }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <button class="btn btn-primary w-100 mt-3" @click="fetchOrders">Actualizar Órdenes</button>
+    <button class="btn btn-primary w-100 mt-3" @click="fetchOrders">
+      Actualizar Órdenes
+    </button>
   </div>
 </template>
 
 <script>
 import OrderService from "@/services/order.service";
-import ClientService from "@/services/client.service";
+import DeliveryManService from "@/services/deliveryman.service";
 import DeliveryPointService from "@/services/deliverypoint.service";
+import ClientService from "@/services/client.service";
 
 export default {
   name: "ViewOrders",
   data() {
     return {
-      orders: [], // Lista de órdenes
-      selectedOrderDetails: null, // Detalles de la orden seleccionada
+      orders: [], // Lista de todas las órdenes
+      deliveryPoints: [], // Lista de órdenes aceptadas
     };
+  },
+  computed: {
+    // Filtrar órdenes para mostrar solo las que tienen estado "Enviada"
+    filteredOrders() {
+      return this.orders.filter((order) => order.status === "Enviada");
+    },
   },
   methods: {
     // Obtener todas las órdenes
     async fetchOrders() {
       try {
         const orders = await OrderService.getAllOrders();
-
-        // Obtener el nombre del cliente para cada orden
         const ordersWithClientNames = await Promise.all(
           orders.map(async (order) => {
             const clientName = await ClientService.getClientName(order.client_id);
             return { ...order, client_name: clientName };
           })
         );
-
         this.orders = ordersWithClientNames;
+        this.fetchDeliveryPoints(); // Cargar órdenes aceptadas
       } catch (error) {
         console.error("Error al obtener las órdenes:", error.response?.data || error.message);
         alert("No se pudieron cargar las órdenes. Intenta nuevamente.");
       }
     },
 
-    // Redirigir al mapa con location_id obtenido por delivery_point_id
-    async viewOnMap(deliveryPointId) {
+    // Obtener las órdenes aceptadas por el repartidor
+    async fetchDeliveryPoints() {
       try {
-        const locationId = await DeliveryPointService.getLocationIdByDeliveryPointId(deliveryPointId);
-        if (!locationId) {
-          alert("No se encontró una ubicación para esta orden.");
-          return;
-        }
+        const clientId = localStorage.getItem("clientId");
+        if (!clientId) return alert("Usuario no autenticado.");
+
+        // Obtener DeliveryMan asociado al clientId
+        const deliveryMan = await DeliveryManService.getDeliveryManByclientId(clientId);
+        if (!deliveryMan) return alert("No se encontró un repartidor asociado.");
+
+        // Obtener DeliveryPoints asociados al DeliveryMan
+        const points = await DeliveryPointService.getDeliveryPointsByDeliveryManId(
+          deliveryMan.deliveryman_id
+        );
+
+        // Filtrar puntos que tengan rating == null y enriquecer datos
+        this.deliveryPoints = await Promise.all(
+          points
+            .filter((point) => point.rating === null)
+            .map(async (point) => {
+              const clientName = await ClientService.getClientName(point.client_id);
+              return { ...point, client_name: clientName, status: "Aceptada" };
+            })
+        );
+      } catch (error) {
+        console.error(
+          "Error al obtener los puntos de entrega:",
+          error.response?.data || error.message
+        );
+      }
+    },
+
+    // Redirigir al mapa con location_id obtenido por delivery_point_id
+    async viewOnMap(locationId) {
+      try {
         this.$router.push(`/location-viewer?locationId=${locationId}`);
       } catch (error) {
         console.error("Error al redirigir al mapa:", error.response?.data || error.message);
         alert("No se pudo redirigir al mapa. Intenta nuevamente.");
       }
     },
+
+    // Aceptar la orden
+    async acceptOrder(deliveryPointId) {
+      try {
+        const clientId = localStorage.getItem("clientId");
+        if (!clientId) return alert("Usuario no autenticado.");
+
+        const deliveryMan = await DeliveryManService.getDeliveryManByclientId(clientId);
+        if (!deliveryMan) return alert("No se encontró información del repartidor.");
+
+        await DeliveryPointService.updateDeliveryManId(
+          deliveryPointId,
+          deliveryMan.deliveryman_id
+        );
+        alert("Orden aceptada con éxito.");
+        this.fetchOrders();
+      } catch (error) {
+        console.error("Error al aceptar la orden:", error.response?.data || error.message);
+        alert("No se pudo aceptar la orden. Intenta nuevamente.");
+      }
+    },
   },
   mounted() {
-    this.fetchOrders(); // Cargar órdenes al montar el componente
+    this.fetchOrders();
   },
 };
 </script>
@@ -125,22 +192,17 @@ export default {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-h2 {
+h2,
+h3 {
   color: #333;
   margin-bottom: 20px;
+  text-align: center;
 }
 
 .table th,
 .table td {
   text-align: center;
   vertical-align: middle;
-}
-
-.order-details {
-  padding: 20px;
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 10px;
 }
 
 .btn-primary {
@@ -151,5 +213,15 @@ h2 {
 
 .btn-primary:hover {
   background-color: #0056b3;
+}
+
+.btn-info {
+  background-color: #17a2b8;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.btn-info:hover {
+  background-color: #138496;
 }
 </style>

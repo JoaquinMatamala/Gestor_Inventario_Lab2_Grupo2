@@ -198,69 +198,35 @@ CREATE TRIGGER trg_update_product_status
     EXECUTE FUNCTION update_product_status();
 
 -----------------
--- no agregar hasta probar lo antiguo
 
-create function insert_pos_establishment() returns trigger
-    language plpgsql
-as
-$$
-BEGIN
-INSERT INTO pos_establishment (establishment_id, latitude, longitude, geom)
-    VALUES (
-           NEW.establishment_id,
-           CAST(NEW.latitude AS DOUBLE PRECISION),
-           CAST(NEW.longitude AS DOUBLE PRECISION),
-           ST_SetSRID(ST_MakePoint(CAST(NEW.longitude AS DOUBLE PRECISION), CAST(NEW.latitude AS DOUBLE PRECISION)), 4326)
-       )
-    ON CONFLICT (establishment_id) DO UPDATE
-        SET
-            latitude = EXCLUDED.latitude,
-            longitude = EXCLUDED.longitude,
-            geom = EXCLUDED.geom;
-
-RETURN NEW;
-END;
-$$;
-
-alter function insert_pos_establishment() owner to postgres;
-
-
-create trigger trg_insert_pos_establishment
-    after insert or update
-                        on establishment
-                        for each row
-                        execute procedure insert_pos_establishment();
 
 --------
 
---crear funcion que asigna a una order un id de deliverypoint
-
--- Crear la función del trigger
-CREATE OR REPLACE FUNCTION link_delivery_point_to_order()
-    RETURNS TRIGGER AS $$
-DECLARE
-    order_id BIGINT;
+-- PARA CREAR UNA ENTIDAD DELIVERYMAN
+-- Crear la función create_deliveryman
+CREATE OR REPLACE FUNCTION create_deliveryman(client_id BIGINT, establishment_id BIGINT)
+    RETURNS VOID AS $$
 BEGIN
-    -- Buscar la última orden creada (se asume que se hace de forma secuencial)
-    SELECT order_id INTO order_id
-    FROM orders
-    WHERE client_id = NEW.client_id
-    ORDER BY date DESC
-    LIMIT 1;
+    INSERT INTO delivery_man (client_id, establishment_id)
+    VALUES (client_id, establishment_id);
+END;
+$$ LANGUAGE plpgsql;
 
-    -- Si encontramos una orden, actualizamos el campo delivery_point_id
-    IF order_id IS NOT NULL THEN
-        UPDATE orders
-        SET delivery_point_id = NEW.delivery_point_id
-        WHERE order_id = order_id;
+-- Crear la función after_client_insert
+CREATE OR REPLACE FUNCTION after_client_insert()
+    RETURNS TRIGGER AS $$
+BEGIN
+    -- Verificar si el cliente tiene el rol 'REPARTIDOR'
+    IF NEW.role = 'REPARTIDOR' THEN
+        -- Llamar a la función para crear un registro en delivery_man
+        PERFORM create_deliveryman(NEW.client_id, 1);
     END IF;
-
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 -- Crear el trigger
-CREATE TRIGGER after_insert_delivery_point
-    AFTER INSERT ON delivery_point
+CREATE TRIGGER after_client_insert_trigger
+    AFTER INSERT ON client
     FOR EACH ROW
-EXECUTE FUNCTION link_delivery_point_to_order();
+EXECUTE FUNCTION after_client_insert();

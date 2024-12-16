@@ -2,17 +2,17 @@ package com.example.Lab1TBD.persistence.repositories;
 
 import com.example.Lab1TBD.persistence.entities.LocationEntity;
 
+import java.util.List;
+
 public interface LocationRepository {
-
+    //DEFAULT
+    List<LocationEntity> findAllLocations();
     LocationEntity findLocationById(Long location_id);
-
-    LocationEntity findLocationByType(String location_type);
-
-
-
     void saveLocation(LocationEntity location);
+    void deleteLocationById(Long location_id);
 
+    //SEARCH
     LocationEntity findLocationWithMaxId();
-
-    void deleteLocation(Long location_id);
+    List<LocationEntity> findLocationByType(String location_type);
+    List<LocationEntity> findLocationByAddress(String address);
 }

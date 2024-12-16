@@ -5,6 +5,7 @@ import com.example.Lab1TBD.services.DeliveryPointService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -54,7 +55,7 @@ public class DeliveryPointController {
             @RequestParam Long clientId,
             @RequestParam Long locationId) {
         try {
-            DeliveryPointEntity deliveryPoint = deliveryPointService.findDeliveryPointForClientAndLocation(clientId, locationId);
+            DeliveryPointEntity deliveryPoint = deliveryPointService.getDeliveryPointForClientAndLocation(clientId, locationId);
             if (deliveryPoint == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
             }
@@ -70,5 +71,23 @@ public class DeliveryPointController {
     @GetMapping("/get-location-id/{id}")
     public ResponseEntity<Long> getLocationIdByDeliveryPointId(@PathVariable Long id) {
         return ResponseEntity.ok(deliveryPointService.getLocationIdByDeliveryPointId(id));
+    }
+
+    @PostMapping("/update-deliveryman")
+    public ResponseEntity<Void> updateDeliveryManId(
+            @RequestParam Long deliveryPointId,
+            @RequestParam Long deliveryManId) {
+        try {
+            deliveryPointService.updateDeliveryManId(deliveryPointId, deliveryManId);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/search/deliveryman/{id}")
+    public ResponseEntity<List<DeliveryPointEntity>> searchDeliveryPointByDeliveryManId(@PathVariable Long id) {
+        return ResponseEntity.ok(deliveryPointService.getDeliveryPointByDeliveryManId(id));
     }
 }

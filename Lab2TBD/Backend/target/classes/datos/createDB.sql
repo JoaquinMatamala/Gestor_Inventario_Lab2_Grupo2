@@ -135,9 +135,9 @@ alter table view_establishment
 -- Poblado de las tablas
 INSERT INTO client (client_name, email, password, phone_number,home_location,role) VALUES
                                                                                        ('Juan Perez', 'jp@gmail.com', '123ahbz#2', '+56987654321', 0,'CLIENTE'),
-                                                                                       ('Maria Rodriguez', 'maria@gmail.com', '456ahbz#2', '+56987654350',1,'Repartidor'),
+                                                                                       ('Maria Rodriguez', 'maria@gmail.com', '456ahbz#2', '+56987654350',1,'CLIENTE'),
                                                                                        ('Pedro Gomez', 'pedro@gmail.com', '789ahbz#2', '+56987667321',2,'ADMIN'),
-                                                                                       ('Ana Martinez', 'ana@gmail.com', '123ahbz#2', '+56984447321',3,'Repartidor'),
+                                                                                       ('Ana Martinez', 'ana@gmail.com', '123ahbz#2', '+56984447321',3,'ADMIN'),
                                                                                        ('Carlos Sanchez', 'carlos@gmail.com', '456ahbz#2', '+56987654891',4,'CLIENTE');
 
 INSERT INTO category (category_name) VALUES
@@ -258,7 +258,7 @@ CREATE INDEX idx_location_position ON location USING GIST (position);
 CREATE INDEX idx_areas_geograficas_area ON areas_geograficas USING GIST (area);
 CREATE INDEX idx_pos_establishments_geom ON pos_establishments USING GIST (geom);
 
----------------------------------------------- Calcular la distancia a los puntos fuera del área
+------------------------ Calcular la distancia a los puntos fuera del área
 
 SELECT
     dp.delivery_point_id,
