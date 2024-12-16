@@ -24,4 +24,9 @@ public class EstablishmentService {
     public EstablishmentEntity getEstablishmentByRegion(String region) {
         return establishmentRepository.findEstablishmentByRegion(region);
     }
+
+    public void saveEstablishment(EstablishmentEntity establishment){
+        establishmentRepository.saveEstablishment(establishment);
+    }
+
 }

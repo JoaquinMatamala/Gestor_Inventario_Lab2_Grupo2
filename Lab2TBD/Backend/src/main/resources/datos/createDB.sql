@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS delivery_point (
 
 -- Tabla: Establishment
 CREATE TABLE IF NOT EXISTS establishment (
-    establishment_id SERIAL PRIMARY KEY,
+    establishment_id serial PRIMARY KEY,
     establishment_data VARCHAR(255),
     region_data VARCHAR(255),
     location_id BIGINT
@@ -94,38 +94,11 @@ CREATE TABLE IF NOT EXISTS delivery_man (
 
 create table if not exists establishment
 (
-    establishment_id                        integer,
+    establishment_id                        BIGINT,
     establishmet_data                       text,
-    establecimientocodigoantiguo            text,
-    establecimientocodigomadreantiguo       text,
-    establecimientocodigomadrenuevo         DOUBLE PRECISION,
-    region_id                               integer,
     region_data                             text,
-    seremisaludcodigo_serviciodesaludcodigo DOUBLE PRECISION,
-    seremisaludglosa_serviciodesaludglosa   text,
-    tipopertenenciaestabglosa               text,
-    tipoestablecimientoglosa                text,
-    ambitofuncionamiento                    text,
-    certificacion                           text,
-    dependenciaadministrativa               text,
-    nivelatencionestabglosa                 text,
-    comunacodigo                            text,
-    comunaglosa                             text,
-    tipoviaglosa                            text,
-    numero                                  text,
-    nombrevia                               text,
-    telefonomovil_telefonofijo              text,
-    fechainiciofuncionamientoestab          text,
-    tieneserviciourgencia                   text,
-    tipourgencia                            text,
-    clasificaciontiposapu                   text,
     latitude                                text,
-    longitude                               text,
-    tiposistemasaludglosa                   text,
-    estadofuncionamiento                    text,
-    nivelcomplejidadestabglosa              text,
-    tipoatencionestabglosa                  text,
-    fechaincorporacion                      text
+    longitude                               text
 );
 
 alter table establishment
@@ -133,7 +106,7 @@ alter table establishment
 
 create table if not exists pos_establishments
 (
-    establishment_id      integer not null primary key,
+    establishment_id      BIGINT not null primary key,
     latitude              DOUBLE PRECISION,
     longitude             DOUBLE PRECISION,
     geom                  geometry(Point, 4326)
@@ -160,12 +133,12 @@ alter table view_establishment
 ------------------------------------------
 
 -- Poblado de las tablas
-INSERT INTO client (client_name, address, email, password, phone_number) VALUES
-                                   ('Juan Perez', 'Victor Hugo #801', 'jp@gmail.com', '123ahbz#2', '+56987654321'),
-                                   ('Maria Rodriguez', 'Avenida de las Americas #123', 'maria@gmail.com', '456ahbz#2', '+56987654350'),
-                                   ('Pedro Gomez', 'Calle del Sol #456', 'pedro@gmail.com', '789ahbz#2', '+56987667321'),
-                                   ('Ana Martinez', 'Calle de la Luna #789', 'ana@gmail.com', '123ahbz#2', '+56984447321'),
-                                   ('Carlos Sanchez', 'Calle del Cielo #321', 'carlos@gmail.com', '456ahbz#2', '+56987654891');
+INSERT INTO client (client_name, email, password, phone_number,home_location,role) VALUES
+                                                                                       ('Juan Perez', 'jp@gmail.com', '123ahbz#2', '+56987654321', 0,'CLIENTE'),
+                                                                                       ('Maria Rodriguez', 'maria@gmail.com', '456ahbz#2', '+56987654350',1,'Repartidor'),
+                                                                                       ('Pedro Gomez', 'pedro@gmail.com', '789ahbz#2', '+56987667321',2,'ADMIN'),
+                                                                                       ('Ana Martinez', 'ana@gmail.com', '123ahbz#2', '+56984447321',3,'Repartidor'),
+                                                                                       ('Carlos Sanchez', 'carlos@gmail.com', '456ahbz#2', '+56987654891',4,'CLIENTE');
 
 INSERT INTO category (category_name) VALUES
      ('Electrodomésticos'),

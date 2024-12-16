@@ -13,7 +13,7 @@
     name: "AdminPage",
     methods: {
       goToStores() {
-        this.$router.push("/admin/stores");
+        this.$router.push("/admin/new-establishment");
       },
       goToDelivery() {
         this.$router.push("/admin/delivery");

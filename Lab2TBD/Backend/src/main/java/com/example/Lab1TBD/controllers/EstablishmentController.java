@@ -3,6 +3,7 @@ package com.example.Lab1TBD.controllers;
 import com.example.Lab1TBD.persistence.entities.EstablishmentEntity;
 import com.example.Lab1TBD.services.EstablishmentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,4 +31,11 @@ public class EstablishmentController {
     public ResponseEntity<EstablishmentEntity> getEstablishmentRegion(@RequestParam String region) {
         return ResponseEntity.ok(establishmentService.getEstablishmentByRegion(region));
     }
+
+    @PostMapping("/build")
+    public ResponseEntity<Void> buildEstablishment(@RequestBody EstablishmentEntity establishment) {
+        establishmentService.saveEstablishment(establishment);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
 }

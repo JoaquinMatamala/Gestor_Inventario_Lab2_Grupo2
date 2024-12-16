@@ -118,7 +118,8 @@ public class ProductRepositoryImp implements ProductRepository {
     public void saveProduct(ProductEntity product) {
         try (org.sql2o.Connection con = sql2o.beginTransaction()) {
             con.createQuery("INSERT INTO product (product_name, description, price, stock, product_status, category_id) " +
-                            "VALUES (:product_name, :description, :price, :stock, :product_status, :category_id)")
+                                    "VALUES (:product_name, :description, :price, :stock, :product_status, :category_id)"
+                    )
                     .addParameter("product_name", product.getProduct_name())
                     .addParameter("description", product.getDescription())
                     .addParameter("price", product.getPrice())

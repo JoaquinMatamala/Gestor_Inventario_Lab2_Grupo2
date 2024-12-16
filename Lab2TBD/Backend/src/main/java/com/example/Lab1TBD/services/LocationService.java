@@ -52,5 +52,7 @@ public class LocationService {
     public LocationEntity getLocationByType(String location_type) {
         return locationRepository.findLocationByType(location_type);
     }
+
+
 }
 

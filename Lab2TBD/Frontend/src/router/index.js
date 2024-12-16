@@ -11,6 +11,9 @@ import SelectLocation from '@/components/SelectLocation.vue';
 import AdminPage from '../components/AdminPage.vue';
 import StoreManagement from '../components/StoreManagement.vue';
 import DeliveryManagement from '../components/DeliveryManagement.vue';
+import NewEstablishment from '@/components/NewEstablishment.vue';
+import LocationViewer from '@/components/LocationViewer.vue';
+import DeliveryPage from '@/components/DeliveryPage.vue';
 
 const routes = [
   {
@@ -74,6 +77,21 @@ const routes = [
     name: 'DeliveryManagement',
     component: DeliveryManagement,
   },
+  {
+    path: '/admin/new-establishment',
+    name: 'NewEstablishment',
+    component: NewEstablishment
+  },
+  {
+    path: '/location-viewer',
+    name: 'LocationViewer',
+    component: LocationViewer,
+  },
+  {
+    path: '/deliveryman',
+    name: 'DeliveryMan',
+    component: DeliveryPage,
+  }
 ];
 
 const router = createRouter({

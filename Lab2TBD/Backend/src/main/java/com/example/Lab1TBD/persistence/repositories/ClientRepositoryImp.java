@@ -154,8 +154,4 @@ public class ClientRepositoryImp implements ClientRepository {
         }
     }
 
-
-
-
-
 }

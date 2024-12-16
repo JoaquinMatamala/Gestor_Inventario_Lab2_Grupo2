@@ -133,7 +133,20 @@ class OrderService {
       throw error;
     }
   }
-  
+  async getAllOrders() {
+    try {
+      const response = await axios.get(`${API_URL}/order/getall`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+        },
+      });
+      return response.data; // Devuelve la lista de órdenes obtenida
+    } catch (error) {
+      console.error("Error al obtener todas las órdenes:", error.response?.data || error.message);
+      throw error; // Relanza el error para que el componente lo maneje
+    }
+  }
   
   
   
