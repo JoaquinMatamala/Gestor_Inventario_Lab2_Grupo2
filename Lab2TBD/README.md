@@ -132,7 +132,7 @@ El Frontend cuenta con los siguientes archivos:
 - App.vue
 - main.js
 ##
-Otros archivos estan fuera de la carpeta src, los mas destacable son:
+Otros archivos estan fuera de la carpeta src, los más destacable son:
 
 ##
 - .env
