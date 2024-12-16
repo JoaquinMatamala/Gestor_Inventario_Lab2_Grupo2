@@ -49,22 +49,21 @@ public class LocationService {
         // Guardar en el repositorio
         locationRepository.saveLocation(location);
     }
-
+    /*
     public void deleteLocationById(Long location_id){
         locationRepository.deleteLocationById(location_id);
-    }
+    }}*/
 
     public LocationEntity getLocationWithMaxId() {
         return locationRepository.findLocationWithMaxId();
     }
-
-
+    /*
     public List<LocationEntity> getLocationByType(String location_type) {
         return locationRepository.findLocationByType(location_type);
     }
 
     public List<LocationEntity> getLocationByAddress(String address){
         return locationRepository.findLocationByAddress(address);
-    }
+    }*/
 }
 

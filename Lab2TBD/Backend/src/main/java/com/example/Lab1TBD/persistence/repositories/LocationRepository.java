@@ -9,7 +9,8 @@ public interface LocationRepository {
     List<LocationEntity> findAllLocations();
     LocationEntity findLocationById(Long location_id);
     void saveLocation(LocationEntity location);
-    void deleteLocationById(Long location_id);
+    //void updateLocation(LocationEntity location);
+    //void deleteLocationById(Long location_id);
 
     //SEARCH
     LocationEntity findLocationWithMaxId();

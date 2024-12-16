@@ -13,36 +13,14 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
+    // DEFAULT ------------------------------------------------------------------------------------
+
     public List<ProductEntity> getAllProducts(){
         return productRepository.findAllProducts();
     }
 
     public ProductEntity getProductById(Long id) {
         return productRepository.findProductById(id);
-    }
-
-    public List<ProductEntity> getProductsByName(String name) {
-        return productRepository.findProductByName(name);
-    }
-
-    public List<ProductEntity> getProductsByStatus(String status) {
-        return productRepository.findProductsByStatus(status);
-    }
-
-    public List<ProductEntity> getProductsByCategoryId(Long categoryId) {
-        return productRepository.findProductsByCategoryId(categoryId);
-    }
-
-    public List<ProductEntity> getProductsByStock(int stock){
-        return productRepository.findProductByStock(stock);
-    }
-
-    public List<ProductEntity> getProductsByDescription(String description){
-        return productRepository.findProductByDescription(description);
-    }
-
-    public List<ProductEntity> getProductsByPrice(float price){
-        return productRepository.findProductByPrice(price);
     }
 
     public void saveProduct(ProductEntity product) {
@@ -55,5 +33,35 @@ public class ProductService {
 
     public void deleteProduct(Long id) {
         productRepository.deleteProductById(id);
+    }
+
+    // SEARCH ------------------------------------------------------------------------------------------
+
+    public List<ProductEntity> getProductsByName(String name) {
+        return productRepository.findProductsByName(name);
+    }
+
+    public List<ProductEntity> getProductsByStatus(String status) {
+        return productRepository.findProductsByStatus(status);
+    }
+
+    public List<ProductEntity> getProductsByCategoryId(Long categoryId) {
+        return productRepository.findProductsByCategoryId(categoryId);
+    }
+
+    public List<ProductEntity> getProductsByStock(int stock){
+        return productRepository.findProductsByStock(stock);
+    }
+
+    public List<ProductEntity> getProductsByDescription(String description){
+        return productRepository.findProductsByDescription(description);
+    }
+
+    public List<ProductEntity> getProductsByPrice(float price){
+        return productRepository.findProductsByPrice(price);
+    }
+
+    public int getProductStockById(Long productId){
+        return productRepository.getProductStockById(productId);
     }
 }

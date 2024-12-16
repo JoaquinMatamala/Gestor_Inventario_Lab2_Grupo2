@@ -5,11 +5,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.sql2o.Sql2o;
 
+import java.util.List;
+
 @Repository
 public class CategoryRepositoryImp implements CategoryRepository {
 
     @Autowired
     private Sql2o sql2o;
+
+    // Encontrar todas las categorias.
+    @Override
+    public List<CategoryEntity> findAllCategories(){
+        String query = "SELECT * FROM category";
+        try (org.sql2o.Connection con = sql2o.open()){
+            return con.createQuery(query)
+                    .executeAndFetch(CategoryEntity.class);
+        } catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     // Encontrar categoría por ID
     @Override
@@ -24,25 +39,11 @@ public class CategoryRepositoryImp implements CategoryRepository {
         }
     }
 
-    // Encontrar categoría por nombre
-    @Override
-    public CategoryEntity findCategoryByName(String category_name) {
-        try (org.sql2o.Connection con = sql2o.open()) {
-            return con.createQuery("SELECT * FROM category WHERE category_name = :category_name")
-                    .addParameter("category_name", category_name)
-                    .executeAndFetchFirst(CategoryEntity.class); // `executeAndFetchFirst` asegura un solo resultado
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null; // Manejo de errores
-        }
-    }
-
     // Guardar una nueva categoría
     @Override
     public void saveCategory(CategoryEntity category) {
         try (org.sql2o.Connection con = sql2o.beginTransaction()) {
-            con.createQuery(
-                            "INSERT INTO category (category_id, category_name) VALUES (:category_id, :category_name)")
+            con.createQuery("INSERT INTO category (category_id, category_name) VALUES (:category_id, :category_name)")
                     .addParameter("category_id", category.getCategory_id())
                     .addParameter("category_name", category.getCategory_name())
                     .executeUpdate();
@@ -75,6 +76,19 @@ public class CategoryRepositoryImp implements CategoryRepository {
                     .executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    // Encontrar categoría por nombre
+    @Override
+    public CategoryEntity findCategoryByName(String category_name) {
+        try (org.sql2o.Connection con = sql2o.open()) {
+            return con.createQuery("SELECT * FROM category WHERE category_name = :category_name")
+                    .addParameter("category_name", category_name)
+                    .executeAndFetchFirst(CategoryEntity.class); // `executeAndFetchFirst` asegura un solo resultado
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null; // Manejo de errores
         }
     }
 }

@@ -6,23 +6,45 @@
     <div v-if="deliveryPoints.length > 0" class="mb-5">
       <h3 class="text-center">Órdenes Aceptadas</h3>
       <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>ID Orden</th>
-            <th>Nombre Cliente</th>
-            <th>Estado</th>
-            <th>Dirección</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="point in deliveryPoints" :key="point.delivery_point_id">
-            <td>{{ point.delivery_point_id }}</td>
-            <td>{{ point.client_name }}</td>
-            <td>{{ point.status }}</td>
-            <td>{{ point.address }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <thead>
+        <tr>
+          <th>ID Orden</th>
+          <th>Nombre Cliente</th>
+          <th>Estado</th>
+          <th>Dirección</th>
+          <th>Fecha</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="order in filteredOrders"
+          :key="order.order_id"
+        >
+          <td>{{ order.order_id }}</td>
+          <td>{{ order.client_name }}</td>
+          <td>{{ order.status }}</td>
+          <td>
+            {{ order.address }}
+            <button
+              class="btn btn-primary btn-sm ms-2"
+              @click="viewOnMap(order.delivery_point_id)"
+            >
+              Ver en mapa
+            </button>
+          </td>
+          <td>{{ new Date(order.date).toLocaleDateString() }}</td>
+          <td>
+            <button
+              class="btn btn-info btn-sm"
+              @click="acceptOrder(order.delivery_point_id)"
+            >
+              Aceptar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
     </div>
 
     <!-- Tabla de órdenes disponibles -->

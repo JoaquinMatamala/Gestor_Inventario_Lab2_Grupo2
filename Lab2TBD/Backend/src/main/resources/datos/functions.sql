@@ -230,3 +230,54 @@ CREATE TRIGGER after_client_insert_trigger
     AFTER INSERT ON client
     FOR EACH ROW
 EXECUTE FUNCTION after_client_insert();
+
+-- TRIGGER PARA EVALUACIONES
+CREATE OR REPLACE FUNCTION update_or_insert_rating()
+    RETURNS TRIGGER AS $$
+DECLARE
+    location_id BIGINT;
+    address VARCHAR(255);
+    avg_rating FLOAT;
+BEGIN
+    -- Obtener el delivery_location_point relacionado
+    SELECT delivery_location_point INTO location_id
+    FROM delivery_point
+    WHERE delivery_point_id = NEW.delivery_point_id;
+
+    -- Obtener la dirección asociada al location_id
+    SELECT address INTO address
+    FROM location
+    WHERE location_id = location_id;
+
+    -- Verificar si la dirección ya existe en la tabla de rating
+    IF NOT EXISTS (
+        SELECT 1
+        FROM rating
+        WHERE address = address
+    ) THEN
+        -- Insertar una nueva entrada con la dirección y el rating del delivery_point
+        INSERT INTO rating (address, rating)
+        VALUES (address, NEW.rating);
+    ELSE
+        -- Calcular el promedio de todos los ratings asociados a esta dirección
+        SELECT AVG(dp.rating) INTO avg_rating
+        FROM delivery_point dp
+                 JOIN location l ON dp.delivery_location_point = l.location_id
+        WHERE l.address = address
+          AND dp.rating IS NOT NULL;
+
+        -- Actualizar el rating de la dirección en la tabla de rating
+        UPDATE rating
+        SET rating = avg_rating
+        WHERE address = address;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Crear el trigger para ejecutarse después de una actualización de rating en delivery_point
+CREATE TRIGGER trigger_update_rating
+    AFTER UPDATE OF rating ON delivery_point
+    FOR EACH ROW
+EXECUTE FUNCTION update_or_insert_rating();

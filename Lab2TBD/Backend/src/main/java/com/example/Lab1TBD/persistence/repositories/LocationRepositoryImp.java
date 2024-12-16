@@ -59,6 +59,33 @@ public class LocationRepositoryImp implements LocationRepository {
             e.printStackTrace();
         }
     }
+    /*
+    @Override
+    public void updateLocation(LocationEntity location){
+        String query =
+                """
+                UPDATE location
+                SET
+                address = :address,
+                latitude = :latitude,
+                longitude = :longitude,
+                position = :position,
+                location_type = :location_type
+                WHERE location_id = :location_id
+                """;
+        try (org.sql2o.Connection con = sql2o.beginTransaction()){
+            con.createQuery(query)
+                    .addParameter("address",location.getAddress())
+                    .addParameter("latitude",location.getLatitude())
+                    .addParameter("longitude",location.getLongitude())
+                    .addParameter("position",location.getPosition())
+                    .addParameter("location_type",location.getLocation_type())
+                    .addParameter("location_id",location.getLocation_id())
+                    .executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void deleteLocationById(Long location_id) {
@@ -70,14 +97,14 @@ public class LocationRepositoryImp implements LocationRepository {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }}*/
 
     // SEARCH -------------------------------------------------------------------------------------
 
     @Override
     public LocationEntity findLocationWithMaxId() {
         try (org.sql2o.Connection con = sql2o.open()) {
-            String query = "SELECT * FROM locations ORDER BY location_id DESC LIMIT 1;";
+            String query = "SELECT * FROM location ORDER BY location_id DESC LIMIT 1;";
             return con.createQuery(query)
                     .executeAndFetchFirst(LocationEntity.class);
         } catch (Exception e) {

@@ -1,5 +1,6 @@
 package com.example.Lab1TBD.persistence.repositories;
 
+import com.example.Lab1TBD.persistence.entities.DeliveryManEntity;
 import com.example.Lab1TBD.persistence.entities.DeliveryPointEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -213,4 +214,26 @@ public class DeliveryPointRepositoryImp implements DeliveryPointRepository {
             e.printStackTrace();
         }
     }
+    /*
+    @Override
+    public Boolean verifyDeliveryManInArea(){
+        try(org.sql2o.Connection con = sql2o.open()){
+            con.createQuery("SELECT
+    dp.delivery_point_id,
+    dp.delivery_point_name,
+    dp.comment,
+    l.position,
+    ag.nombre AS area_nombre,
+    ST_Within(l.position, ag.area) AS dentro_del_area
+FROM
+    delivery_point dp
+        JOIN
+    location l ON dp.delivery_location_point = l.location_id
+        JOIN
+    areas_geograficas ag ON ST_Within(l.position, ag.area)
+WHERE
+    dp.status_point = TRUE;")
+        }
+    }*/
+
 }

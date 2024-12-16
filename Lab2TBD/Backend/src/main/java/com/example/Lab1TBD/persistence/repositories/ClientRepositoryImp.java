@@ -53,9 +53,14 @@ public class ClientRepositoryImp implements ClientRepository {
     // Guardar cliente
     @Override
     public void saveClient(ClientEntity client) {
+        String query =
+                """
+                INSERT INTO client
+                (client_name, home_location, email, password, phone_number, role)
+                VALUES (:client_name, :home_location, :email, :password, :phone_number, :role)
+                """;
         try (org.sql2o.Connection con = sql2o.beginTransaction()) {
-            con.createQuery("INSERT INTO client (client_name, home_location, email, password, phone_number, role) " +
-                            "VALUES (:client_name, :home_location, :email, :password, :phone_number, :role)")
+            con.createQuery(query)
                     .addParameter("client_name", client.getClient_name())
                     .addParameter("home_location", client.getHome_location())
                     .addParameter("email", client.getEmail())

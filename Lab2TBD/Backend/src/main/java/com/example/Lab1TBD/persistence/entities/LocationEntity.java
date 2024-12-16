@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 public class LocationEntity {
     private Long location_id;     // Unique ID
+
     private String address;       // Location name
     private Double latitude;      // Localization latitude
     private Double longitude;     // Localization longitude

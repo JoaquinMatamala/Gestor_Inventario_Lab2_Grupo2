@@ -5,10 +5,14 @@ import com.example.Lab1TBD.persistence.entities.EstablishmentEntity;
 import java.util.List;
 
 public interface EstablishmentRepository {
+    // DEFAULT
     List<EstablishmentEntity> findAllEstablishments();
     EstablishmentEntity findEstablishmentById(Long id);
-    EstablishmentEntity findEstablishmentByRegion(String region);
     void saveEstablishment(EstablishmentEntity establishment);
+    void updateEstablishment(EstablishmentEntity establishment);
+    void deleteEstablishmentById(Long id);
 
-    String getAddressByLocationId(Long locationId);
+    // OTHER
+    String findAddressByLocationId(Long locationId);
+    EstablishmentEntity findEstablishmentByRegion(String region);
 }

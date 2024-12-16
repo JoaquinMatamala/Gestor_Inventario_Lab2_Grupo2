@@ -13,7 +13,19 @@ public class ProductRepositoryImp implements ProductRepository {
     @Autowired
     private Sql2o sql2o;
 
-    // Buscar producto por ID
+    // DEFAULT ------------------------------------------------------------------------------------
+
+    @Override
+    public List<ProductEntity> findAllProducts(){
+        try (org.sql2o.Connection con = sql2o.open()){
+            return con.createQuery("SELECT * FROM product")
+                    .executeAndFetch(ProductEntity.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     @Override
     public ProductEntity findProductById(Long product_id) {
         try (org.sql2o.Connection con = sql2o.open()) {
@@ -27,98 +39,10 @@ public class ProductRepositoryImp implements ProductRepository {
     }
 
     @Override
-    public List<ProductEntity> findAllProducts(){
-        try (org.sql2o.Connection con = sql2o.open()){
-            return con.createQuery("SELECT * FROM product")
-                    .executeAndFetch(ProductEntity.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    // Buscar producto por nombre
-    @Override
-    public List<ProductEntity> findProductByName(String product_name) {
-        try (org.sql2o.Connection con = sql2o.open()) {
-            return con.createQuery("SELECT * FROM product WHERE product_name LIKE :product_name")
-                    .addParameter("product_name", "%" + product_name + "%")
-                    .executeAndFetch(ProductEntity.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    // Buscar productos por estado
-    @Override
-    public List<ProductEntity> findProductsByStatus(String product_status) {
-        try (org.sql2o.Connection con = sql2o.open()) {
-            return con.createQuery("SELECT * FROM product WHERE product_status = :product_status")
-                    .addParameter("product_status", product_status)
-                    .executeAndFetch(ProductEntity.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    // Buscar productos por stock
-    @Override
-    public List<ProductEntity> findProductByStock(int stock) {
-        try (org.sql2o.Connection con = sql2o.open()) {
-            return con.createQuery("SELECT * FROM product WHERE stock = :stock")
-                    .addParameter("stock", stock)
-                    .executeAndFetch(ProductEntity.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-    // Buscar productos por descripción
-    @Override
-    public List<ProductEntity> findProductByDescription(String description) {
-        try (org.sql2o.Connection con = sql2o.open()) {
-            return con.createQuery("SELECT * FROM product WHERE description ILIKE :description")
-                    .addParameter("description", "%" + description + "%") // Búsqueda parcial
-                    .executeAndFetch(ProductEntity.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-    // Buscar productos por precio
-    @Override
-    public List<ProductEntity> findProductByPrice(float price) {
-        try (org.sql2o.Connection con = sql2o.open()) {
-            return con.createQuery("SELECT * FROM product WHERE price = :price")
-                    .addParameter("price", price)
-                    .executeAndFetch(ProductEntity.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    // Buscar productos por categoría
-    @Override
-    public List<ProductEntity> findProductsByCategoryId(Long category_id) {
-        try (org.sql2o.Connection con = sql2o.open()) {
-            return con.createQuery("SELECT * FROM product WHERE category_id = :category_id")
-                    .addParameter("category_id", category_id)
-                    .executeAndFetch(ProductEntity.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    // Guardar un nuevo producto
-    @Override
     public void saveProduct(ProductEntity product) {
         try (org.sql2o.Connection con = sql2o.beginTransaction()) {
             con.createQuery("INSERT INTO product (product_name, description, price, stock, product_status, category_id) " +
-                                    "VALUES (:product_name, :description, :price, :stock, :product_status, :category_id)"
+                            "VALUES (:product_name, :description, :price, :stock, :product_status, :category_id)"
                     )
                     .addParameter("product_name", product.getProduct_name())
                     .addParameter("description", product.getDescription())
@@ -132,7 +56,6 @@ public class ProductRepositoryImp implements ProductRepository {
         }
     }
 
-    // Actualizar un producto por ID
     @Override
     public void updateProduct(ProductEntity product) {
         try (org.sql2o.Connection con = sql2o.beginTransaction()) {
@@ -153,7 +76,6 @@ public class ProductRepositoryImp implements ProductRepository {
         }
     }
 
-    // Borrar un producto por ID
     @Override
     public void deleteProductById(Long product_id) {
         try (org.sql2o.Connection con = sql2o.beginTransaction()) {
@@ -163,6 +85,80 @@ public class ProductRepositoryImp implements ProductRepository {
         } catch (Exception e) {
             // Registrar el error en lugar de solo imprimir
             throw new RuntimeException("Error al eliminar el producto con ID " + product_id, e);
+        }
+    }
+
+    // SEARCH -------------------------------------------------------------------------------------
+
+    @Override
+    public List<ProductEntity> findProductsByName(String product_name) {
+        try (org.sql2o.Connection con = sql2o.open()) {
+            return con.createQuery("SELECT * FROM product WHERE product_name LIKE :product_name")
+                    .addParameter("product_name", "%" + product_name + "%")
+                    .executeAndFetch(ProductEntity.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<ProductEntity> findProductsByDescription(String description) {
+        try (org.sql2o.Connection con = sql2o.open()) {
+            return con.createQuery("SELECT * FROM product WHERE description ILIKE :description")
+                    .addParameter("description", "%" + description + "%") // Búsqueda parcial
+                    .executeAndFetch(ProductEntity.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<ProductEntity> findProductsByPrice(float price) {
+        try (org.sql2o.Connection con = sql2o.open()) {
+            return con.createQuery("SELECT * FROM product WHERE price = :price")
+                    .addParameter("price", price)
+                    .executeAndFetch(ProductEntity.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<ProductEntity> findProductsByStock(int stock) {
+        try (org.sql2o.Connection con = sql2o.open()) {
+            return con.createQuery("SELECT * FROM product WHERE stock = :stock")
+                    .addParameter("stock", stock)
+                    .executeAndFetch(ProductEntity.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<ProductEntity> findProductsByStatus(String product_status) {
+        try (org.sql2o.Connection con = sql2o.open()) {
+            return con.createQuery("SELECT * FROM product WHERE product_status = :product_status")
+                    .addParameter("product_status", product_status)
+                    .executeAndFetch(ProductEntity.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<ProductEntity> findProductsByCategoryId(Long category_id) {
+        try (org.sql2o.Connection con = sql2o.open()) {
+            return con.createQuery("SELECT * FROM product WHERE category_id = :category_id")
+                    .addParameter("category_id", category_id)
+                    .executeAndFetch(ProductEntity.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -230,9 +226,6 @@ public class ProductRepositoryImp implements ProductRepository {
         }
     }
 
-
-
-
     @Override
     public int getProductStockById(Long productId) {
         try (org.sql2o.Connection con = sql2o.open()) {
@@ -245,6 +238,5 @@ public class ProductRepositoryImp implements ProductRepository {
             throw new RuntimeException("Error al obtener el stock del producto: " + productId);
         }
     }
-
 
 }

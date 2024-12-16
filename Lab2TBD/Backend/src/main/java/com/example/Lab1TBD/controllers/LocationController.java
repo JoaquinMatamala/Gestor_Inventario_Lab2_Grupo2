@@ -17,7 +17,7 @@ public class LocationController {
     @Autowired
     private LocationService locationService;
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<String> saveLocation(@RequestBody GeoJsonDTO geoJson) {
         System.out.println("Propiedades recibidas: " + geoJson.getProperties());
 
@@ -45,7 +45,7 @@ public class LocationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al buscar la ubicación");
         }
     }
-
+    /*
     @GetMapping("/getType")
     public ResponseEntity<List<LocationEntity>> getLocationByType(@RequestParam String type) {
         List<LocationEntity> found = locationService.getLocationByType(type);
@@ -54,7 +54,9 @@ public class LocationController {
         } else {
             return ResponseEntity.ok(found);
         }
-    }
+    }*/
+
+
 
     @GetMapping("/max-id")
     public ResponseEntity<LocationEntity> getLocationWithMaxId() {

@@ -8,6 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CategoryEntity {
-    private Long category_id;       // Unique ID
+    private Long category_id;     // Unique ID
+
     private String category_name; // Category name
 }

@@ -20,12 +20,13 @@ public interface DeliveryPointRepository {
     Long findLocationIdByDeliveryPointId(Long deliveryPointId);
 
     // OTHER --------------------------------------------------------------------------------------
-    // Obtener el promedio de valoración de todos los puntos de entrega
-    Float findAllDeliveryPointsAVG();
+
+    // Actualiza el ID del deliveryman
+    void updateDeliveryManId(Long delivery_point_id, Long deliveryman_id);
 
     // Actualizar el estado de un punto de entrega (activar/desactivar)
     void updateStatusPoint(Long delivery_point_id, Boolean status);
 
-    // Actualiza el ID del deliveryman
-    void updateDeliveryManId(Long delivery_point_id, Long deliveryman_id);
+    // Obtener el promedio de valoración de todos los puntos de entrega
+    Float findAllDeliveryPointsAVG();
 }

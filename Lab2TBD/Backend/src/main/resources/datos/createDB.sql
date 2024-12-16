@@ -88,6 +88,13 @@ CREATE TABLE IF NOT EXISTS delivery_man (
     establishment_id BIGINT
 );
 
+-- Tabla: Rating
+CREATE TABLE IF NOT EXISTS rating (
+    rating_id SERIAL PRIMARY KEY,
+    address VARCHAR(255),
+    rating FLOAT
+);
+
 
 
 ------------------------------------------------------------- nuevo
