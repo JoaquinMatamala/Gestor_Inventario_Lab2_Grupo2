@@ -14,4 +14,6 @@ public interface OrderRepository {
     List<OrderEntity> findByClientId(Long clientId);
     List<OrderEntity> findByStatus(String status);
     void updateOrderStatus(Long orderId, String status);
+
+    Long getOrderIdByDeliveryPointId(Long deliveryPointId);
 }

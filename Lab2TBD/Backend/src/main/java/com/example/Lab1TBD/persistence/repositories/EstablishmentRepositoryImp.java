@@ -31,7 +31,6 @@ public class EstablishmentRepositoryImp implements EstablishmentRepository {
             return con.createQuery("SELECT * FROM view_establishment WHERE establishment_id = :establishment_id")
                     .addParameter("establishment_id",establishment_id)
                     .executeAndFetchFirst(EstablishmentEntity.class);
-
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -41,13 +40,14 @@ public class EstablishmentRepositoryImp implements EstablishmentRepository {
 
     @Override
     public void saveEstablishment(EstablishmentEntity establishment) {
-        try (org.sql2o.Connection con = sql2o.open()) {
+        try (org.sql2o.Connection con = sql2o.beginTransaction()) {
             con.createQuery("INSERT INTO establishment (establishment_data, region_data, location_id) " +
                             "VALUES (:establishment_data, :region_data, :location_id)")
                     .addParameter("establishment_data", establishment.getEstablishment_data())
                     .addParameter("region_data", establishment.getRegion_data())
                     .addParameter("location_id", establishment.getLocation_id())
                     .executeUpdate(); // Ejecuta la consulta sin intentar obtener un resultado
+            con.commit();
         } catch (Exception e) {
             e.printStackTrace(); // Maneja el error según sea necesario
         }
@@ -71,6 +71,7 @@ public class EstablishmentRepositoryImp implements EstablishmentRepository {
                     .addParameter("location_id",establishment.getLocation_id())
                     .addParameter("establishment_id",establishment.getEstablishment_id())
                     .executeUpdate();
+            con.commit();
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -83,6 +84,7 @@ public class EstablishmentRepositoryImp implements EstablishmentRepository {
             con.createQuery(query)
                     .addParameter("establishment_id",establishment_id)
                     .executeUpdate();
+            con.commit();
         }catch (Exception e){
             e.printStackTrace();
         }

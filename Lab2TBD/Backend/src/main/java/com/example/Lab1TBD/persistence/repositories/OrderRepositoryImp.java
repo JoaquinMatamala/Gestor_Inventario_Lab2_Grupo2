@@ -44,7 +44,7 @@ public class OrderRepositoryImp implements OrderRepository {
                 "VALUES (:date, :status, :total, :client_id, :delivery_point_id)";
 
         // Usamos RETURN_GENERATED_KEYS para obtener el ID generado
-        try (org.sql2o.Connection connection = sql2o.beginTransaction()) {
+        try (org.sql2o.Connection connection = sql2o.open()) {
             Long generatedId = connection.createQuery(insertQuery, true)
                     .addParameter("date", order.getDate())
                     .addParameter("status", order.getStatus())
@@ -130,6 +130,18 @@ public class OrderRepositoryImp implements OrderRepository {
                     .executeUpdate();
         } catch (Exception e){
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public Long getOrderIdByDeliveryPointId(Long deliveryPointId) {
+        try (org.sql2o.Connection con = sql2o.open()) {
+            return con.createQuery("SELECT order_id FROM orders WHERE delivery_point_id = :deliveryPointId")
+                    .addParameter("deliveryPointId", deliveryPointId)
+                    .executeAndFetchFirst(Long.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 

@@ -60,7 +60,7 @@ public class DeliveryPointRepositoryImp implements DeliveryPointRepository {
                     .addParameter("client_id", deliveryPoint.getClient_id())
                     .executeUpdate()
                     .getKey(Long.class); // Obtener la clave generada como Long
-
+            con.commit();
             return generatedId;
         } catch (Exception e) {
             e.printStackTrace();
@@ -94,6 +94,7 @@ public class DeliveryPointRepositoryImp implements DeliveryPointRepository {
                     .addParameter("client_id",deliveryPoint.getClient_id())
                     .addParameter("delivery_point_id",deliveryPoint.getDelivery_point_id())
                     .executeUpdate();
+            con.commit();
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -106,6 +107,7 @@ public class DeliveryPointRepositoryImp implements DeliveryPointRepository {
             con.createQuery(query)
                     .addParameter("delivery_point_id",delivery_point_id)
                     .executeUpdate();
+            con.commit();
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -193,11 +195,12 @@ public class DeliveryPointRepositoryImp implements DeliveryPointRepository {
 
     @Override
     public void updateStatusPoint(Long delivery_point_id, Boolean status) {
-        try (org.sql2o.Connection con = sql2o.open()) {
+        try (org.sql2o.Connection con = sql2o.beginTransaction()) {
             con.createQuery("UPDATE delivery_point SET status_point = :status WHERE delivery_point_id = :delivery_point_id")
                     .addParameter("status", status)
                     .addParameter("delivery_point_id", delivery_point_id)
                     .executeUpdate();
+            con.commit();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -205,11 +208,12 @@ public class DeliveryPointRepositoryImp implements DeliveryPointRepository {
 
     @Override
     public void updateDeliveryManId(Long deliveryPointId, Long deliveryManId){
-        try(org.sql2o.Connection con = sql2o.open()){
+        try(org.sql2o.Connection con = sql2o.beginTransaction()){
             con.createQuery("UPDATE delivery_point SET deliveryman_id = :deliveryManId WHERE delivery_point_id = :deliveryPointId")
                     .addParameter("deliveryManId", deliveryManId)
                     .addParameter("deliveryPointId", deliveryPointId)
                     .executeUpdate();
+            con.commit();
         } catch (Exception e) {
             e.printStackTrace();
         }

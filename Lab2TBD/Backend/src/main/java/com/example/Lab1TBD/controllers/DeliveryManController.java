@@ -70,8 +70,6 @@ public class DeliveryManController {
         }
     }
 
-
-
     @GetMapping("/search/establishment/{establishmentId}")
     public ResponseEntity<List<DeliveryManEntity>> getDeliveryMenByEstablishmentId(@PathVariable Long establishmentId){
         List<DeliveryManEntity> found = deliveryManService.getDeliveryMenByEstablishmentId(establishmentId);

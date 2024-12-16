@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 public class AuditEntity {
     private Long audit_id;           // Unique ID
+
     private Long user_id;            // User ID
     private String action_type;      // Action type (INSERT, UPDATE, DELETE)
     private String table_name;       // Table affected name

@@ -53,8 +53,16 @@ public class DeliveryManRepositoryImp implements DeliveryManRepository{
 
     @Override
     public void updateDeliveryMan(DeliveryManEntity deliveryMan) {
+        String query =
+                """
+                UPDATE delivery_man
+                SET
+                client_id = :client_id,
+                establishment_id = :establishment_id
+                WHERE deliveryman_id = :deliveryman_id
+                """;
         try (org.sql2o.Connection con = sql2o.beginTransaction()) {
-            con.createQuery("UPDATE delivery_man SET client_id = :client_id, establishment_id = :establishment_id WHERE deliveryman_id = :deliveryman_id")
+            con.createQuery(query)
                     .addParameter("deliveryman_id", deliveryMan.getDeliveryman_id())
                     .addParameter("client_id", deliveryMan.getClient_id())
                     .addParameter("establishment_id", deliveryMan.getEstablishment_id())
@@ -93,9 +101,6 @@ public class DeliveryManRepositoryImp implements DeliveryManRepository{
             return null;
         }
     }
-
-
-
 
     @Override
     public List<DeliveryManEntity> findDeliveryManByEstablishmentId(Long establishmentId){

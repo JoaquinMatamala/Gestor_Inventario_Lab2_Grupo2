@@ -147,9 +147,22 @@ class OrderService {
       throw error; // Relanza el error para que el componente lo maneje
     }
   }
-  
-  
-  
+
+  // Obtener el ID de la orden por el ID del punto de entrega, retorna Long (int64)
+  async getOrderIdByDeliveryPointId(deliveryPointId) {
+    try {
+      const response = await axios.get(`${API_URL}/order/search/deliveryPointId/${deliveryPointId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+        },
+      });
+      return response.data;
+      } catch (error) {
+        console.error("Error al obtener el ID de la orden por el ID del punto de entrega:", error.response?.data || error.message);
+        throw error;
+      }
+    }
 }
 
 

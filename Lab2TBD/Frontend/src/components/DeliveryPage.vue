@@ -3,9 +3,8 @@
     <h2 class="text-center mb-4">Órdenes Disponibles</h2>
 
     <!-- Tabla de "Por entregar" -->
-    <div v-if="deliveryPoints.length > 0" class="mb-5">
-      <h3 class="text-center">Órdenes Aceptadas</h3>
-      <table class="table table-striped">
+    <h3 class="text-center">Órdenes Aceptadas</h3>
+    <table class="table table-striped">
       <thead>
         <tr>
           <th>ID Orden</th>
@@ -37,15 +36,14 @@
           <td>
             <button
               class="btn btn-info btn-sm"
-              @click="acceptOrder(order.delivery_point_id)"
             >
-              Aceptar
+              Evaluar
             </button>
           </td>
         </tr>
       </tbody>
     </table>
-    </div>
+
 
     <!-- Tabla de órdenes disponibles -->
     <h3 class="text-center">Órdenes Disponibles</h3>
@@ -190,6 +188,8 @@ export default {
           deliveryPointId,
           deliveryMan.deliveryman_id
         );
+
+
         alert("Orden aceptada con éxito.");
         this.fetchOrders();
       } catch (error) {

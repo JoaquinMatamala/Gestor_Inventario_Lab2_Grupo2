@@ -69,4 +69,8 @@ public class OrderService {
         }
         orderRepository.updateOrderStatus(orderId, status);
     }
+
+    public Long getOrderIdByDeliveryPointId(Long deliveryPointId) {
+        return orderRepository.getOrderIdByDeliveryPointId(deliveryPointId);
+    }
 }

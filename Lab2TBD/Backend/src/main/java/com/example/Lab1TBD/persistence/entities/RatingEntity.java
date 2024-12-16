@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 public class RatingEntity {
     private Long rating_id;   // Unique ID
+
     private String address;   // Location name
     private Float rating;     // Rating
 }

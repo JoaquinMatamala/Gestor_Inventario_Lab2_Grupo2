@@ -47,6 +47,7 @@ public class CategoryRepositoryImp implements CategoryRepository {
                     .addParameter("category_id", category.getCategory_id())
                     .addParameter("category_name", category.getCategory_name())
                     .executeUpdate();
+            con.commit();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -55,13 +56,20 @@ public class CategoryRepositoryImp implements CategoryRepository {
     // Actualizar una categoría por ID
     @Override
     public void updateCategory(CategoryEntity category) {
+        String query =
+                """
+                UPDATE category
+                SET
+                category_name = :category_name
+                WHERE
+                category_id = :category_id
+                """;
         try (org.sql2o.Connection con = sql2o.beginTransaction()) {
-            con.createQuery("UPDATE category " +
-                            "SET category_name = :category_name " + // Eliminado el carácter extra ","
-                            "WHERE category_id = :category_id")
+            con.createQuery(query)
                     .addParameter("category_id", category.getCategory_id())
                     .addParameter("category_name", category.getCategory_name())
                     .executeUpdate();
+            con.commit();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -74,6 +82,7 @@ public class CategoryRepositoryImp implements CategoryRepository {
             con.createQuery("DELETE FROM category WHERE category_id = :category_id")
                     .addParameter("category_id", category_id)
                     .executeUpdate();
+            con.commit();
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -112,6 +112,7 @@ public class OrderDetailRepositoryImp implements OrderDetailRepository {
                     .addParameter("product_id", orderDetail.getProduct_id())
                     .addParameter("order_detail_id", orderDetail.getOrder_detail_id())
                     .executeUpdate();
+            con.commit();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -124,6 +125,7 @@ public class OrderDetailRepositoryImp implements OrderDetailRepository {
             con.createQuery("DELETE FROM order_detail WHERE order_detail_id = :order_detail_id")
                     .addParameter("order_detail_id", order_detail_id)
                     .executeUpdate();
+            con.commit();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -146,6 +148,7 @@ public class OrderDetailRepositoryImp implements OrderDetailRepository {
             con.createQuery("DELETE FROM order_detail WHERE order_id = :orderId")
                     .addParameter("orderId", orderId)
                     .executeUpdate();
+            con.commit();
         } catch (Exception e) {
             e.printStackTrace();
         }

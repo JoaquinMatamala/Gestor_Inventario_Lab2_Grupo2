@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 public class ClientEntity {
     private Long client_id;       // Unique ID
+
     private String client_name;   // Client name
     private String email;         // Client email
     private String password;      // Password

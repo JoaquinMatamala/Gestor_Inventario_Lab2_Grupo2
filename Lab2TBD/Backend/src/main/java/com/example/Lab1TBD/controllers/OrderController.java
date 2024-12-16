@@ -106,6 +106,11 @@ public class OrderController {
         }
     }
 
+    @GetMapping("/search/deliveryPointId/{deliveryPointId}")
+    public ResponseEntity<Long> getOrderIdByDeliveryPointId(@PathVariable Long deliveryPointId) {
+        return ResponseEntity.ok(orderService.getOrderIdByDeliveryPointId(deliveryPointId));
+    }
+
 
 
 
