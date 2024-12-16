@@ -3,7 +3,7 @@
       <h2 class="text-center mb-4">Mis Entregas Pendientes</h2>
   
       <!-- Tabla de entregas -->
-      <div v-if="deliveryPoints.length > 0">
+      <div v-if="filteredDeliveryPoints.length > 0">
         <table class="table table-striped">
           <thead>
             <tr>
@@ -15,7 +15,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="point in deliveryPoints" :key="point.delivery_point_id">
+            <tr v-for="point in filteredDeliveryPoints" :key="point.delivery_point_id">
               <td>{{ point.delivery_point_id }}</td>
               <td>{{ point.client_name || "Desconocido" }}</td>
               <td>
@@ -30,7 +30,7 @@
               <td>
                 <button
                   class="btn btn-success btn-sm"
-                  @click="completeAndEvaluate(point.delivery_point_id)"
+                  @click="openReviewModal(point.delivery_point_id)"
                 >
                   Completar y evaluar
                 </button>
@@ -47,6 +47,30 @@
       <button class="btn btn-primary w-100 mt-3" @click="fetchDeliveries">
         Actualizar Entregas
       </button>
+  
+      <!-- Modal para evaluación -->
+      <div v-if="showModal" class="modal fade show" tabindex="-1" role="dialog" style="display: block; background: rgba(0,0,0,0.5);">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Evaluar Entrega</h5>
+              <button type="button" class="btn-close" @click="closeReviewModal"></button>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="rating">Cantidad de Estrellas:</label>
+                <select v-model="review.rating" id="rating" class="form-control">
+                  <option v-for="n in 5" :key="n" :value="n">{{ n }} ★</option>
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" @click="closeReviewModal">Cerrar</button>
+              <button type="button" class="btn btn-primary" @click="confirmReview">Confirmar</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </template>
   
@@ -60,7 +84,17 @@
     data() {
       return {
         deliveryPoints: [], // Lista de entregas
+        showModal: false, // Estado del modal
+        review: {
+          rating: 1, // Puntaje inicial
+        },
+        currentDeliveryPointId: null, // ID del punto de entrega actual
       };
+    },
+    computed: {
+      filteredDeliveryPoints() {
+        return this.deliveryPoints.filter(point => point.rating === null);
+      }
     },
     methods: {
       // Obtener todas las entregas asociadas al repartidor
@@ -119,24 +153,33 @@
         }
       },
   
-      // Completar y evaluar la entrega
-      async completeAndEvaluate(deliveryPointId) {
+      // Abrir el modal de evaluación
+      openReviewModal(deliveryPointId) {
+        this.currentDeliveryPointId = deliveryPointId;
+        this.showModal = true;
+      },
+  
+      // Cerrar el modal de evaluación
+      closeReviewModal() {
+        this.showModal = false;
+        this.review.rating = 1;
+        this.currentDeliveryPointId = null;
+      },
+  
+      // Confirmar la evaluación
+      async confirmReview() {
         try {
-          const confirmed = confirm("¿Estás seguro de completar y evaluar esta entrega?");
-          if (!confirmed) return;
-  
-          // Placeholder para lógica adicional al completar la entrega
-          // Aquí puedes llamar a un servicio para actualizar el estado de la entrega y guardar la evaluación
-  
-          alert(`Entrega con ID ${deliveryPointId} completada y lista para evaluar.`);
-          this.fetchDeliveries(); // Actualizar la lista después de completar
+          // Llamar al servicio para actualizar el rating
+          await DeliveryPointService.updateRating(this.currentDeliveryPointId, this.review.rating);
+          console.log(`Evaluación para el punto de entrega ${this.currentDeliveryPointId}: ${this.review.rating} estrellas`);
+          alert("Evaluación guardada exitosamente.");
         } catch (error) {
-          console.error(
-            `Error al completar y evaluar la entrega ${deliveryPointId}:`,
-            error.response?.data || error.message
-          );
-          alert("No se pudo completar la entrega. Intenta nuevamente.");
+          console.error("Error al guardar la evaluación:", error.response?.data || error.message);
+          alert("No se pudo guardar la evaluación. Intenta nuevamente.");
         }
+  
+        this.closeReviewModal();
+        this.fetchDeliveries(); // Actualizar la lista después de completar
       },
     },
     mounted() {
@@ -184,5 +227,34 @@
   
   .btn-success:hover {
     background-color: #218838;
+  }
+  
+  .modal-content {
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px;
+  }
+  
+  .modal-body .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .modal-body .form-control {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
   }
   </style>

@@ -150,6 +150,25 @@ class DeliveryPointService {
         throw error;
       }
     }
+    async updateRating(deliveryPointId, rating) {
+      try {
+        console.log(`📤 Actualizando rating para DeliveryPointId: ${deliveryPointId} con rating: ${rating}`);
+        await axios.put(
+          `${API_DELIVERY_POINT_URL}/update-rating`,
+          null,
+          {
+            params: { deliveryPointId, rating },
+            headers: this.getAuthHeader(),
+          }
+        );
+        console.log("✅ Rating actualizado correctamente.");
+      } catch (error) {
+        console.error("❌ Error al actualizar el rating:", error.response?.data || error.message);
+        throw error;
+      }
+    }
+
+    
     
   
 

@@ -29,4 +29,6 @@ public interface DeliveryPointRepository {
 
     // Obtener el promedio de valoración de todos los puntos de entrega
     Float findAllDeliveryPointsAVG();
+
+    void updateRating(Long delivery_point_id, Float rating);
 }

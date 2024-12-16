@@ -90,4 +90,19 @@ public class DeliveryPointController {
     public ResponseEntity<List<DeliveryPointEntity>> searchDeliveryPointByDeliveryManId(@PathVariable Long id) {
         return ResponseEntity.ok(deliveryPointService.getDeliveryPointByDeliveryManId(id));
     }
+
+    // UPDATERS ------------------------------------------------------------------------------------
+    @PutMapping("/update-rating")
+    public ResponseEntity<Void> updateRating(
+            @RequestParam Long deliveryPointId,
+            @RequestParam Float rating) {
+        try {
+            deliveryPointService.updateRating(deliveryPointId, rating);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 }

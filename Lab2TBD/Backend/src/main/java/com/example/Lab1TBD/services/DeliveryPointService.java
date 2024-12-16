@@ -83,4 +83,8 @@ public class DeliveryPointService {
     public Float findAllDeliveryPointsAVG(){
         return deliveryPointRepository.findAllDeliveryPointsAVG();
     }
+
+    public void updateRating(Long delivery_point_id, Float rating){
+        deliveryPointRepository.updateRating(delivery_point_id, rating);
+    }
 }

@@ -1,6 +1,5 @@
 package com.example.Lab1TBD.persistence.repositories;
 
-import com.example.Lab1TBD.persistence.entities.DeliveryManEntity;
 import com.example.Lab1TBD.persistence.entities.DeliveryPointEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -239,6 +238,19 @@ WHERE
     dp.status_point = TRUE;")
         }
     }*/
+
+    @Override
+    public void updateRating(Long delivery_point_id, Float rating){
+        try(org.sql2o.Connection con = sql2o.beginTransaction()){
+            con.createQuery("UPDATE delivery_point SET rating = :rating WHERE delivery_point_id = :delivery_point_id")
+                    .addParameter("rating", rating)
+                    .addParameter("delivery_point_id", delivery_point_id)
+                    .executeUpdate();
+            con.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
 
