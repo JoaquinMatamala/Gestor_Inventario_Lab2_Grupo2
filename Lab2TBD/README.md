@@ -27,7 +27,7 @@ El backend cuenta con los siguientes archivos:
     - ProductController
     - RaitingController
 
-### persistance
+### persistence
     - dto
         - GeoJsonDTO
         - LoginDto
