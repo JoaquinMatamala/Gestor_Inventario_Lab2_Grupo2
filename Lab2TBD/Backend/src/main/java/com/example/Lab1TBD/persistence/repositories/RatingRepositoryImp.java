@@ -46,6 +46,7 @@ public class RatingRepositoryImp implements RatingRepository{
                     .addParameter("address",ratingEntity.getAddress())
                     .addParameter("rating",ratingEntity.getRating())
                     .executeUpdate();
+            con.commit();
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -60,6 +61,7 @@ public class RatingRepositoryImp implements RatingRepository{
                     .addParameter("rating",ratingEntity.getRating())
                     .addParameter("rating_id",ratingEntity.getRating_id())
                     .executeUpdate();
+            con.commit();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -72,6 +74,7 @@ public class RatingRepositoryImp implements RatingRepository{
             con.createQuery(query)
                     .addParameter("rating_id",rating_id)
                     .executeUpdate();
+            con.commit();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -86,6 +89,7 @@ public class RatingRepositoryImp implements RatingRepository{
                     .addParameter("rating",rating)
                     .addParameter("rating_id",rating_id)
                     .executeUpdate();
+            con.commit();
         } catch (Exception e) {
             e.printStackTrace();
         }

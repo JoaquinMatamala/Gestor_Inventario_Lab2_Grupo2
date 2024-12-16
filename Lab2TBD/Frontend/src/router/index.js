@@ -18,6 +18,7 @@ import LocationViewer from '@/components/LocationViewer.vue';
 import DeliveryPage from '@/components/DeliveryPage.vue';
 import DeliveryMainPage from '@/components/DeliveryMainPage.vue';
 import ReviewDeliveryPoint from '@/components/ReviewDeliveryPoint.vue';
+import ToDoDeliveries from '@/components/ToDoDeliveries.vue';
 
 const routes = [
   {
@@ -108,6 +109,12 @@ const routes = [
     name: 'ReviewDeliveryPoint',
     component: ReviewDeliveryPoint,
   },
+
+  {
+    path: '/del-page/to-do-deliveries',
+    name: 'ToDoDeliveries',
+    component: ToDoDeliveries,
+  }
 ];
 
 const router = createRouter({

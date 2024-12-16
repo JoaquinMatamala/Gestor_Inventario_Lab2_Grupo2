@@ -51,6 +51,7 @@ public class ProductRepositoryImp implements ProductRepository {
                     .addParameter("product_status", product.getProduct_status())
                     .addParameter("category_id", product.getCategory_id())
                     .executeUpdate();
+            con.commit();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -71,6 +72,7 @@ public class ProductRepositoryImp implements ProductRepository {
                     .addParameter("category_id", product.getCategory_id())
                     .addParameter("product_id", product.getProduct_id())
                     .executeUpdate();
+            con.commit();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -82,6 +84,7 @@ public class ProductRepositoryImp implements ProductRepository {
             con.createQuery("DELETE FROM product WHERE product_id = :product_id")
                     .addParameter("product_id", product_id)
                     .executeUpdate();
+            con.commit();
         } catch (Exception e) {
             // Registrar el error en lugar de solo imprimir
             throw new RuntimeException("Error al eliminar el producto con ID " + product_id, e);

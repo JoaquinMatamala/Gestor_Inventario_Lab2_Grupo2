@@ -44,7 +44,7 @@ public class OrderRepositoryImp implements OrderRepository {
                 "VALUES (:date, :status, :total, :client_id, :delivery_point_id)";
 
         // Usamos RETURN_GENERATED_KEYS para obtener el ID generado
-        try (org.sql2o.Connection connection = sql2o.open()) {
+        try (org.sql2o.Connection connection = sql2o.beginTransaction()) {
             Long generatedId = connection.createQuery(insertQuery, true)
                     .addParameter("date", order.getDate())
                     .addParameter("status", order.getStatus())
@@ -53,6 +53,7 @@ public class OrderRepositoryImp implements OrderRepository {
                     .addParameter("delivery_point_id", order.getDelivery_point_id())
                     .executeUpdate()
                     .getKey(Long.class); // Obtenemos el ID generado como Long
+            connection.commit();
             return generatedId;
         } catch (Exception e) {
             e.printStackTrace();
@@ -72,6 +73,7 @@ public class OrderRepositoryImp implements OrderRepository {
                     .addParameter("client_id", order.getClient_id())
                     .addParameter("order_id", order.getOrder_id())
                     .executeUpdate();
+            con.commit();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -83,6 +85,7 @@ public class OrderRepositoryImp implements OrderRepository {
             con.createQuery("DELETE FROM orders WHERE order_id = :orderId")
                     .addParameter("orderId", orderId)
                     .executeUpdate();
+            con.commit();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -128,6 +131,7 @@ public class OrderRepositoryImp implements OrderRepository {
                     .addParameter("orderId", orderId)
                     .addParameter("status", status)
                     .executeUpdate();
+            con.commit();
         } catch (Exception e){
             e.printStackTrace();
         }

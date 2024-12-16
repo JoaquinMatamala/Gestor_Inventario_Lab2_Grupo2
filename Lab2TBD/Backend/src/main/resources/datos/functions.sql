@@ -281,3 +281,36 @@ CREATE TRIGGER trigger_update_rating
     AFTER UPDATE OF rating ON delivery_point
     FOR EACH ROW
 EXECUTE FUNCTION update_or_insert_rating();
+
+---------------------
+--TRIGGER PARA ACTUALIZAR ESTADO DE ORDEN CUANDO LA ACEPTA UN REPARTIDOR
+-- Trigger para INSERT
+
+CREATE OR REPLACE FUNCTION update_order_status_on_deliveryman_change()
+    RETURNS TRIGGER AS $$
+BEGIN
+    -- Verificar si el deliveryman_id no es NULL
+    IF NEW.deliveryman_id IS NOT NULL THEN
+        -- Actualizar el estado de la orden asociada a este delivery_point
+        UPDATE orders
+        SET status = 'En camino'
+        WHERE delivery_point_id = NEW.delivery_point_id;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER trigger_update_order_status_after_insert
+    AFTER INSERT ON delivery_point
+    FOR EACH ROW
+    WHEN (NEW.deliveryman_id IS NOT NULL)
+EXECUTE FUNCTION update_order_status_on_deliveryman_change();
+
+-- Trigger para UPDATE
+CREATE TRIGGER trigger_update_order_status_after_update
+    AFTER UPDATE ON delivery_point
+    FOR EACH ROW
+    WHEN (NEW.  deliveryman_id IS DISTINCT FROM OLD.deliveryman_id AND NEW.deliveryman_id IS NOT NULL)
+EXECUTE FUNCTION update_order_status_on_deliveryman_change();

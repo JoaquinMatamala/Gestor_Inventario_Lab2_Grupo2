@@ -2,49 +2,6 @@
   <div class="data-container">
     <h2 class="text-center mb-4">Órdenes Disponibles</h2>
 
-    <!-- Tabla de "Por entregar" -->
-    <h3 class="text-center">Órdenes Aceptadas</h3>
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>ID Orden</th>
-          <th>Nombre Cliente</th>
-          <th>Estado</th>
-          <th>Dirección</th>
-          <th>Fecha</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="order in filteredOrders"
-          :key="order.order_id"
-        >
-          <td>{{ order.order_id }}</td>
-          <td>{{ order.client_name }}</td>
-          <td>{{ order.status }}</td>
-          <td>
-            {{ order.address }}
-            <button
-              class="btn btn-primary btn-sm ms-2"
-              @click="viewOnMap(order.delivery_point_id)"
-            >
-              Ver en mapa
-            </button>
-          </td>
-          <td>{{ new Date(order.date).toLocaleDateString() }}</td>
-          <td>
-            <button
-              class="btn btn-info btn-sm"
-            >
-              Evaluar
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-
     <!-- Tabla de órdenes disponibles -->
     <h3 class="text-center">Órdenes Disponibles</h3>
     <table class="table table-striped">
@@ -105,7 +62,6 @@ export default {
   data() {
     return {
       orders: [], // Lista de todas las órdenes
-      deliveryPoints: [], // Lista de órdenes aceptadas
     };
   },
   computed: {
@@ -126,48 +82,20 @@ export default {
           })
         );
         this.orders = ordersWithClientNames;
-        this.fetchDeliveryPoints(); // Cargar órdenes aceptadas
       } catch (error) {
         console.error("Error al obtener las órdenes:", error.response?.data || error.message);
         alert("No se pudieron cargar las órdenes. Intenta nuevamente.");
       }
     },
 
-    // Obtener las órdenes aceptadas por el repartidor
-    async fetchDeliveryPoints() {
-      try {
-        const clientId = localStorage.getItem("clientId");
-        if (!clientId) return alert("Usuario no autenticado.");
-
-        // Obtener DeliveryMan asociado al clientId
-        const deliveryMan = await DeliveryManService.getDeliveryManByclientId(clientId);
-        if (!deliveryMan) return alert("No se encontró un repartidor asociado.");
-
-        // Obtener DeliveryPoints asociados al DeliveryMan
-        const points = await DeliveryPointService.getDeliveryPointsByDeliveryManId(
-          deliveryMan.deliveryman_id
-        );
-
-        // Filtrar puntos que tengan rating == null y enriquecer datos
-        this.deliveryPoints = await Promise.all(
-          points
-            .filter((point) => point.rating === null)
-            .map(async (point) => {
-              const clientName = await ClientService.getClientName(point.client_id);
-              return { ...point, client_name: clientName, status: "Aceptada" };
-            })
-        );
-      } catch (error) {
-        console.error(
-          "Error al obtener los puntos de entrega:",
-          error.response?.data || error.message
-        );
-      }
-    },
-
     // Redirigir al mapa con location_id obtenido por delivery_point_id
-    async viewOnMap(locationId) {
+    async viewOnMap(deliveryPointId) {
       try {
+        const locationId = await DeliveryPointService.getLocationIdByDeliveryPointId(deliveryPointId);
+        if (!locationId) {
+          alert("No se encontró una ubicación para esta orden.");
+          return;
+        }
         this.$router.push(`/location-viewer?locationId=${locationId}`);
       } catch (error) {
         console.error("Error al redirigir al mapa:", error.response?.data || error.message);
@@ -188,7 +116,6 @@ export default {
           deliveryPointId,
           deliveryMan.deliveryman_id
         );
-
 
         alert("Orden aceptada con éxito.");
         this.fetchOrders();

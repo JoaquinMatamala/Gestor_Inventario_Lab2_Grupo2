@@ -137,13 +137,20 @@ class DeliveryPointService {
         console.log("✅ DeliveryPoints obtenidos:", response.data);
         return response.data; // Devuelve la lista de DeliveryPoints
       } catch (error) {
-        console.error(
-          "❌ Error al obtener los DeliveryPoints:",
-          error.response?.data || error.message
-        );
+        if (error.response) {
+          // Si el servidor responde con un código de error
+          console.error(
+            `❌ Error del servidor (${error.response.status}):`,
+            error.response.data || error.message
+          );
+        } else {
+          // Si hay un problema con la conexión
+          console.error("❌ Error de red o conexión:", error.message);
+        }
         throw error;
       }
     }
+    
   
 
 }

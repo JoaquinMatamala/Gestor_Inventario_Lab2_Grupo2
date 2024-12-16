@@ -144,7 +144,7 @@ public class OrderDetailRepositoryImp implements OrderDetailRepository {
     }
     @Override
     public void deleteOrderDetailsByOrderId(Long orderId) {
-        try (org.sql2o.Connection con = sql2o.open()) {
+        try (org.sql2o.Connection con = sql2o.beginTransaction()) {
             con.createQuery("DELETE FROM order_detail WHERE order_id = :orderId")
                     .addParameter("orderId", orderId)
                     .executeUpdate();
