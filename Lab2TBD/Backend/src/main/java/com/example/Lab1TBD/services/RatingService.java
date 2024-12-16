@@ -5,13 +5,14 @@ import com.example.Lab1TBD.persistence.repositories.RatingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
+import java.util.List;
 
 @Service
 public class RatingService {
     @Autowired
     private RatingRepository ratingRepository;
 
+    // --------------------------------------------------------------------------------------------
     public RatingEntity findRatingById(Long rating_id){
         return ratingRepository.findRatingById(rating_id);
     }
@@ -32,6 +33,7 @@ public class RatingService {
         ratingRepository.deleteRatingById(rating_id);
     }
 
+    // --------------------------------------------------------------------------------------------
     public void updateRatingValue(Long id, Float rating){
         ratingRepository.updateRatingValue(id, rating);
     }

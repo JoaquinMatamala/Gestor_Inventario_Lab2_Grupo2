@@ -40,10 +40,13 @@ class LocationService {
   async getLocationById(locationId) {
     console.log(`📥 Solicitando ubicación con ID: ${locationId}`);
     const response = await axios.get(`${API_LOCATION_URL}/getLocation/${locationId}`, {
+      
       headers: this.getAuthHeader(),
     });
     return response.data;
   }
+
+
 }
 
 export default new LocationService();

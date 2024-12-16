@@ -4,7 +4,7 @@ import java.util.List;
 import com.example.Lab1TBD.persistence.entities.DeliveryManEntity;
 
 public interface DeliveryManRepository {
-
+    List<DeliveryManEntity> findAllDeliveryMen();
     DeliveryManEntity findDeliveryManById(Long id);
     List<DeliveryManEntity> findDeliveryManByClientId(String clientId);
     void saveDeliveryMan(DeliveryManEntity deliveryMan);

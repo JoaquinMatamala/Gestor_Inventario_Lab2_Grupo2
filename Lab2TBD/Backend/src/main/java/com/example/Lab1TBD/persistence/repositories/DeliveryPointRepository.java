@@ -18,4 +18,6 @@ public interface DeliveryPointRepository {
     Long saveDeliveryPoint(DeliveryPointEntity deliveryPoint);
 
     DeliveryPointEntity findDeliveryPointForClientAndLocation(Long clientId, Long locationId);
+
+    Long getLocationIdByDeliveryPointId(Long deliveryPointId);
 }

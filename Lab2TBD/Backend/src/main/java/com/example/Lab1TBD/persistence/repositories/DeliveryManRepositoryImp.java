@@ -13,6 +13,18 @@ public class DeliveryManRepositoryImp implements DeliveryManRepository{
     private Sql2o sql2o;
 
     @Override
+    public List<DeliveryManEntity> findAllDeliveryMen(){
+        String query = "SELECT * FROM delivery_man";
+        try (org.sql2o.Connection con = sql2o.open()){
+            return con.createQuery(query)
+                    .executeAndFetch(DeliveryManEntity.class);
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    @Override
     public DeliveryManEntity findDeliveryManById(Long id) {
         try (org.sql2o.Connection con = sql2o.open()) {
             return con.createQuery("SELECT * FROM delivery_man WHERE deliveryman_id = :deliveryman_id")

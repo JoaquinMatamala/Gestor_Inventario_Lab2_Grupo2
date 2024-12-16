@@ -40,6 +40,8 @@ public class ClientService {
         clientRepository.deleteClientById(id);
     }
 
+    // --------------------------------------------------------------------------------------------
+
     // Completar el registro del cliente (añadir dirección y teléfono)
     public ClientEntity completeRegistration(Long id, Long home_location, String phoneNumber) {
         // Buscar cliente por ID
@@ -77,8 +79,35 @@ public class ClientService {
         clientRepository.updateHomeLocation(clientId, locationId);
     }
 
-    public Long getClientHomeLocation(Long clientId) {
-        return clientRepository.findClientHomeLocation(clientId);
+    // --------------------------------------------------------------------------------------------
+
+    public String getClientName(Long clientId) {
+        ClientEntity client = clientRepository.findClientById(clientId);
+        if (client != null) {
+            return client.getClient_name();
+        } else {
+            throw new RuntimeException("Cliente no encontrado.");
+        }
     }
 
+    public Long getClientHomeLocation(Long clientId) {
+        ClientEntity client = clientRepository.findClientById(clientId);
+        if (client != null){
+            return client.getHome_location();
+        } else {
+            throw new RuntimeException("Cliente no encontrado.");
+        }
+    }
+
+    public String getClientEmail(Long clientId){
+        ClientEntity client = clientRepository.findClientById(clientId);
+        if (client != null){
+            return client.getEmail();
+        } else {
+            throw new RuntimeException("Cliente no encontrado.");
+        }
+    }
 }
+
+
+

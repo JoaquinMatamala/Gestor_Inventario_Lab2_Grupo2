@@ -1,6 +1,7 @@
 package com.example.Lab1TBD.persistence.repositories;
 
 import com.example.Lab1TBD.persistence.entities.DeliveryPointEntity;
+import com.example.Lab1TBD.persistence.entities.LocationEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.sql2o.Sql2o;
@@ -114,6 +115,20 @@ public class DeliveryPointRepositoryImp implements DeliveryPointRepository {
             return null;
         }
     }
+    @Override
+    public Long getLocationIdByDeliveryPointId(Long deliveryPointId){
+        try(org.sql2o.Connection con = sql2o.open()){
+            return con.createQuery("SELECT delivery_location_point FROM delivery_point WHERE delivery_point_id = :delivery_point_id")
+                    .addParameter("delivery_point_id", deliveryPointId)
+                    .executeScalar(Long.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+
 
 
 }

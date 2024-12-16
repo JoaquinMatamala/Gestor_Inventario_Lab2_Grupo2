@@ -13,6 +13,5 @@ public class LocationEntity {
     private Double latitude;      // Localization latitude
     private Double longitude;     // Localization longitude
     private String position;      // Localization position (Point)
-    private Float rating;
     private String location_type; // Localization type (example: establishment, home, etc.)
 }

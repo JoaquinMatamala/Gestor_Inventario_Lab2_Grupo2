@@ -161,6 +161,27 @@ class ClientService {
       return false;
     }
   }
+  async getClientName(clientId) {
+    try {
+      const response = await axios.get(`${API_URL}/client/get-client-name/${clientId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+        },
+      });
+  
+      const clientName = response.data; // La respuesta ya es el nombre directamente
+  
+      if (!clientName) {
+        console.warn("No se encontró el nombre del cliente.");
+        return "Nombre no disponible"; // Retorna un nombre por defecto si no se encuentra
+      }
+  
+      return clientName; // Retorna el nombre del cliente
+    } catch (error) {
+      console.error("Error al obtener el nombre del cliente:", error.response?.data || error.message);
+      return "Error al obtener el nombre"; // Retorna un mensaje por defecto si hay error
+    }
+  }
 }
 
 

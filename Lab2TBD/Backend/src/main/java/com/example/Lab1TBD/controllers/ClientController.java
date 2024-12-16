@@ -1,6 +1,5 @@
 package com.example.Lab1TBD.controllers;
 
-
 import com.example.Lab1TBD.persistence.entities.ClientEntity;
 import com.example.Lab1TBD.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +29,7 @@ public class ClientController {
 
         return ResponseEntity.ok(updatedClient); // Retornar cliente actualizado
     }
+
     @PostMapping("/assign-home-location")
     public ResponseEntity<?> assignHomeLocation(@RequestParam Long clientId, @RequestParam Long locationId) {
         try {
@@ -51,5 +51,16 @@ public class ClientController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al obtener ubicación.");
         }
     }
+    @GetMapping("/get-client-name/{id}")
+    public ResponseEntity<?> getClientName(@PathVariable Long id) {
+        try {
+            String clientName = clientService.getClientName(id); // Método que obtiene el nombre del cliente
+            return ResponseEntity.ok(clientName); // Retorna el nombre del cliente
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al obtener el nombre del cliente.");
+        }
+    }
+
 
 }

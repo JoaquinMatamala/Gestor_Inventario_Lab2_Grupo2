@@ -64,4 +64,11 @@ public class DeliveryPointController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+    // GETTERS ------------------------------------------------------------------------------------
+
+    @GetMapping("/get-location-id/{id}")
+    public ResponseEntity<Long> getLocationIdByDeliveryPointId(@PathVariable Long id) {
+        return ResponseEntity.ok(deliveryPointService.getLocationIdByDeliveryPointId(id));
+    }
 }

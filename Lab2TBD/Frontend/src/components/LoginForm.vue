@@ -54,8 +54,12 @@ export default {
     // Verificar el rol del usuario y redirigir
     if (role === "ADMIN") {
       this.$router.push("/admin"); // Página de administrador
-    } else {
-      this.$router.push("/products"); // Página de productos para otros roles
+    } 
+    else if (role === "REPARTIDOR") {
+      this.$router.push("/deliveryman"); // Página de repartidor
+    } 
+    else {
+      this.$router.push("/products"); // Página de usuario
     }
   } catch (error) {
     console.error("Error al iniciar sesión:", error.response?.data || error.message);

@@ -17,5 +17,4 @@ public interface ClientRepository {
 
     void updateHomeLocation(Long clientId, Long locationId);
 
-    Long findClientHomeLocation(Long clientId);
 }

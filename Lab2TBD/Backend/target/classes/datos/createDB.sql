@@ -205,3 +205,76 @@ SELECT
     ROUND((pi.product_income / (SELECT total_income FROM TotalIncome) * 100), 2) AS percentage_of_sales
 FROM ProductIncome pi
 ORDER BY pi.category_name, pi.product_income DESC;
+
+------------ datos para el posgis
+
+CREATE TABLE IF NOT EXISTS areas_geograficas (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(255),
+    area GEOMETRY(POLYGON, 4326) -- Representación geométrica del área
+);
+
+INSERT INTO areas_geograficas (nombre, area)
+VALUES (
+           'Zona de Entrega 1',
+           ST_GeomFromText('POLYGON((-99.2 19.4, -99.1 19.4, -99.1 19.3, -99.2 19.3, -99.2 19.4))', 4326)
+);
+
+---------- verifica que el punto esta dentro del area -----
+
+SELECT
+    dp.delivery_point_id,
+    dp.delivery_point_name,
+    dp.comment,
+    l.position,
+    ag.nombre AS area_nombre,
+    ST_Within(l.position, ag.area) AS dentro_del_area
+FROM
+    delivery_point dp
+        JOIN
+    location l ON dp.delivery_location_point = l.location_id
+        JOIN
+    areas_geograficas ag ON ST_Within(l.position, ag.area)
+WHERE
+    dp.status_point = TRUE; -- Filtrar solo puntos activos
+
+
+--------- verifica si un establecimiento esta den del area
+
+SELECT
+    ve.establishment_id,
+    ve.establishment_data,
+    ve.region_data,
+    ag.nombre AS area_nombre,
+    ST_Within(ve.position, ag.area) AS dentro_del_area
+FROM
+    view_establishment ve
+        JOIN
+    areas_geograficas ag ON ST_Within(ve.position, ag.area);
+
+-------------------------------------------------- indices
+
+CREATE INDEX idx_location_position ON location USING GIST (position);
+CREATE INDEX idx_areas_geograficas_area ON areas_geograficas USING GIST (area);
+CREATE INDEX idx_pos_establishments_geom ON pos_establishments USING GIST (geom);
+
+---------------------------------------------- Calcular la distancia a los puntos fuera del área
+
+SELECT
+    dp.delivery_point_id,
+    dp.delivery_point_name,
+    dp.comment,
+    l.position,
+    ag.nombre AS area_nombre,
+    ST_Distance(l.position, ag.area) AS distancia_al_area
+FROM
+    delivery_point dp
+        JOIN
+    location l ON dp.delivery_location_point = l.location_id
+        JOIN
+    areas_geograficas ag ON NOT ST_Within(l.position, ag.area)
+WHERE
+    dp.status_point = TRUE -- Solo puntos activos
+ORDER BY
+    distancia_al_area ASC
+    LIMIT 5; -- Obtener los 5 puntos más cercanos

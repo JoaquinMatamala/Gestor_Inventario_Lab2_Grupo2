@@ -22,8 +22,6 @@ public class OrderService {
     @Autowired
     private ProductRepository productRepository;
 
-
-
     public OrderEntity getOrdersByOrderId(Long order_id){
         return orderRepository.findByOrderId(order_id);
     }

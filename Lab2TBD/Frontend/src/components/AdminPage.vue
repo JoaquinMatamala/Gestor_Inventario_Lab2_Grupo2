@@ -13,7 +13,7 @@
     name: "AdminPage",
     methods: {
       goToStores() {
-        this.$router.push("/admin/new-establishment");
+        this.$router.push("/admin/stores");
       },
       goToDelivery() {
         this.$router.push("/admin/delivery");
@@ -28,7 +28,7 @@
     margin: 50px auto;
     padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 8px rgba(7, 7, 7, 0.1);
     background-color: #f9f9f9;
   }
   

@@ -33,7 +33,6 @@ public class OrderDetailService {
         return orderDetailRepository.findOrderDetailByOrderId(orderId);
     }
 
-
     public OrderDetailEntity findOrderDetailByProductId(Long product_id){
         return orderDetailRepository.findOrderDetailByProductId(product_id);
     }

@@ -27,6 +27,32 @@ class EstablishmentService {
       throw error;
     }
   }
+
+  async getAllEstablishments() {
+    try {
+      const response = await axios.get(`${API_ESTABLISHMENT_URL}/getall`, {
+        headers: this.getAuthHeader(),
+      });
+      return response.data; // Retorna la lista de establecimientos
+    } catch (error) {
+      console.error("Error al obtener los establecimientos:", error.message);
+      throw new Error("Error al cargar establecimientos.");
+    }
+  }
+  async getAddressByLocationId(locationId) {
+    try {
+      const response = await axios.get(`${API_ESTABLISHMENT_URL}/getdetails/${locationId}`, {
+        headers: this.getAuthHeader(),
+      });
+      console.log("✅ Dirección obtenida:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("❌ Error al obtener la dirección:", error.response?.data || error.message);
+      throw error;
+    }
+  }
+  
+  
 }
 
 export default new EstablishmentService();

@@ -41,4 +41,8 @@ public class DeliveryPointService {
     public DeliveryPointEntity findDeliveryPointForClientAndLocation(Long clientId, Long locationId) {
         return deliveryPointRepository.findDeliveryPointForClientAndLocation(clientId, locationId);
     }
+
+    public Long getLocationIdByDeliveryPointId(Long deliveryPointId) {
+        return deliveryPointRepository.getLocationIdByDeliveryPointId(deliveryPointId);
+    }
 }

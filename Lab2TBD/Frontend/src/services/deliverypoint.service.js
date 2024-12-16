@@ -42,12 +42,21 @@ class DeliveryPointService {
       throw error;
     }
   }
-  
-  
-  
-  
-  
-  
+  // Obtener location_id desde deliveryPointId
+  async getLocationIdByDeliveryPointId(deliveryPointId) {
+    try {
+      console.log(`📥 Obteniendo location_id para deliveryPointId: ${deliveryPointId}`);
+      const response = await axios.get(
+        `${API_DELIVERY_POINT_URL}/get-location-id/${deliveryPointId}`,
+        { headers: this.getAuthHeader() }
+      );
+      console.log("✅ location_id obtenido:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("❌ Error al obtener location_id:", error.response?.data || error.message);
+      throw error;
+    }
+  }  
 
   // Buscar un DeliveryPoint existente para un cliente y ubicación
   async findExistingDeliveryPoint(clientId, locationId) {

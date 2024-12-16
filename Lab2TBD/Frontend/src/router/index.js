@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
+
+// Importación de componentes
 import MainPage from '../components/MainPage.vue';
 import RegisterForm from '../components/RegisterForm.vue';
 import LoginForm from '../components/LoginForm.vue';
@@ -32,8 +34,8 @@ const routes = [
     component: LoginForm,
   },
   {
-    path: "/products",
-    name: "ViewProducts",
+    path: '/products',
+    name: 'ViewProducts',
     component: ViewProducts,
   },
   {
@@ -42,24 +44,25 @@ const routes = [
     component: ViewOrders,
   },
   {
-    path: "/orders/:orderId/details",
-    name: "OrderDetails",
+    path: '/orders/:orderId/details',
+    name: 'OrderDetails',
     component: OrderDetail,
-    props: true, // Pasar params como props
+    props: true, // Pasar parámetros de ruta como props
   },
   {
-    path: "/ranking-queries",
-    name: "RankingQueries",
+    path: '/ranking-queries',
+    name: 'RankingQueries',
     component: RankingQueries,
   },
   {
-    path: "/ranking/detail/user/:id",
-    name: "RankingDetail",
+    path: '/ranking/detail/user/:id',
+    name: 'RankingDetail',
     component: RankingDetail,
+    props: true, // Pasar parámetros como props
   },
   {
-    path: "/select-location",
-    name: "SelectLocation",
+    path: '/select-location',
+    name: 'SelectLocation',
     component: SelectLocation,
   },
   {
@@ -80,18 +83,19 @@ const routes = [
   {
     path: '/admin/new-establishment',
     name: 'NewEstablishment',
-    component: NewEstablishment
+    component: NewEstablishment,
   },
   {
     path: '/location-viewer',
     name: 'LocationViewer',
     component: LocationViewer,
+    props: (route) => ({ locationId: Number(route.query.locationId) }), // Recibe query param como prop
   },
   {
     path: '/deliveryman',
     name: 'DeliveryMan',
     component: DeliveryPage,
-  }
+  },
 ];
 
 const router = createRouter({

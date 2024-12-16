@@ -30,7 +30,7 @@ public class EstablishmentRepositoryImp implements EstablishmentRepository {
     @Override
     public List<EstablishmentEntity> findAllEstablishments(){
         try (org.sql2o.Connection con = sql2o.open()) {
-            return con.createQuery("SELECT * FROM view_establishment")
+            return con.createQuery("SELECT * FROM establishment")
                     .executeAndFetch(EstablishmentEntity.class);
         } catch (Exception e) {
             e.printStackTrace();
