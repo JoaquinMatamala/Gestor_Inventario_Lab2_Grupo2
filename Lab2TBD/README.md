@@ -45,7 +45,7 @@ El backend cuenta con los siguientes archivos:
         - ProductEntity
         - RaitingEntity
 ### repositories
-    - Auditrepository
+        - Auditrepository
         - Categoryrepository
         - Clientrepository
         - DeliveryManrepository
